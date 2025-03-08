@@ -1,0 +1,68 @@
+.main {
+  text-align: center;
+  font-size: 20px;
+}
+
+.purchase-button-container {
+  position: relative;
+  display: inline-block;
+}
+
+.purchase-button {
+  position: relative;
+  width: 150px;
+  height: 100px;
+  padding: 0;
+  border: 2px solid red;
+  border-radius: 8px;
+  background-color: #ccc;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  text-align: center;
+  line-height: 16px;
+  white-space: normal;
+  overflow: hidden;
+  vertical-align: middle;
+
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  &.buyable {
+    background-color: #a8f0a8;
+    border-color: green;
+
+    &:hover {
+      background-color: #8ce08c;
+      border-color: darkgreen;
+    }
+  }
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, -5px);
+  padding: 5px 10px;
+  background-color: #333;
+  color: white;
+  font-size: 14px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
