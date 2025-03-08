@@ -17,5 +17,6 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "crypto": "crypto-browserify",
     }
-  }
+  },
+  base: './'
 })
