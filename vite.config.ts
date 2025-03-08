@@ -6,16 +6,16 @@ import { nodePolyfills } from 'vite-plugin-node-polyfill'
 export default defineConfig({
   plugins: [vue(),
     nodePolyfills({
-      // 根据需要配置 polyfill
       globals: {
-        Buffer: true, // 启用 Buffer polyfill
-        global: true, // 启用 global polyfill
-        process: true, // 启用 process polyfill
+        Buffer: true,
+        global: true,
+        process: true,
       },
     }),],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src")
+      "@": path.resolve(__dirname, "./src"),
+      "crypto": "crypto-browserify",
     }
   }
 })
