@@ -1,16 +1,7 @@
-declare global {
-    interface Window {
-        GLOBAL_SPEED: number
-    }
-}
-
-if (window.GLOBAL_SPEED === undefined) {
-    window.GLOBAL_SPEED = 1
-}
 
 // durationMs is in millisecond
 export function gameLoop(durationMs: number) {
-    let true_duration = durationMs * window.GLOBAL_SPEED;
+    let true_duration = durationMs * window.game.GLOBAL_SPEED;
     if (true_duration < 0) {
         return;
     }
@@ -26,10 +17,4 @@ export function gameLoop(durationMs: number) {
 }
 
 function runGameLoop(duration: number) {
-    let player = window.player
-    player.points = player.points.plus(player.generators.times(duration))
-
-    if (player.points.gte(1000)) {
-        player.endgame = true;
-    }
 }

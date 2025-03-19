@@ -1,11 +1,8 @@
 <script lang="ts" setup>
-import {computed, type ComputedRef, ref, type Ref} from "vue";
-import type {Paths} from "@/util/typing.ts"
-import type {Player} from "@/core/player.ts";
-import type Decimal from "@/break-eternity/break-eternity.ts";
-import type {ButtonProps} from "@/components/button-typing.ts";
+import type { ButtonProps } from "@/core/defines.ts";
+import { computed, type ComputedRef, ref, type Ref } from "vue";
 
-const props = defineProps<ButtonProps>()
+const props = defineProps<ButtonProps>();
 
 function onClick(): void {
   props.buy();
@@ -16,7 +13,7 @@ let mouseHover: Ref<boolean> = ref(false);
 let tooltip: ComputedRef<string | null> = computed(() => {
   if (mouseHover.value && props.tooltipText !== undefined) return props.tooltipText();
   return null;
-})
+});
 </script>
 
 <template>
@@ -24,12 +21,13 @@ let tooltip: ComputedRef<string | null> = computed(() => {
     <button
         v-show="visible()"
         :id="id"
-        :class="{
+        :class="[{
           'purchase-button': true,
           'buyable': buyable(),
           'hover': mouseHover,
-        }"
-        :disabled="!buyable()"
+          'fully-bought': fullyBought !== undefined && fullyBought(),
+        }, extraClasses]"
+        :disabled="!buyable() || (fullyBought !== undefined && fullyBought())"
         @click="onClick()"
         @mouseenter="mouseHover = true"
         @mouseleave="mouseHover = false">

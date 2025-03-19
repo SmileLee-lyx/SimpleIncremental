@@ -192,7 +192,7 @@ let FC = function (sign: number, layer: number, mag: number) {
     return Decimal.fromComponents(sign, layer, mag);
 };
 
-let FC_NN = function(sign: number, layer: number, mag: number) {
+let FC_NN = function (sign: number, layer: number, mag: number) {
     return Decimal.fromComponents_noNormalize(sign, layer, mag);
 };
 
@@ -286,8 +286,7 @@ const f_lambertw = function (z: number, tol = 1e-10, principal = true): number {
         } else {
             w = Math.log(z) - Math.log(Math.log(z));
         }
-    }
-    else {
+    } else {
         if (z === 0) return -Infinity;
 
         if (z <= -0.1) {
@@ -306,7 +305,7 @@ const f_lambertw = function (z: number, tol = 1e-10, principal = true): number {
         }
     }
 
-    throw Error(`Iteration failed to converge: ${z.toString()}`);
+    throw Error(`Iteration failed to converge: ${ z.toString() }`);
     //return Number.NaN;
 };
 
@@ -333,8 +332,7 @@ function d_lambertw(z: Decimal, tol = 1e-10, principal = true): Decimal {
 
         //Get an initial guess for Halley's method
         w = Decimal.ln(z);
-    }
-    else {
+    } else {
         if (z.eq(Decimal.dZero)) {
             return new Decimal(Decimal.dNegInf);
         }
@@ -354,7 +352,7 @@ function d_lambertw(z: Decimal, tol = 1e-10, principal = true): Decimal {
         }
     }
 
-    throw Error(`Iteration failed to converge: ${z.toString()}`);
+    throw Error(`Iteration failed to converge: ${ z.toString() }`);
     //return Decimal.dNaN;
 }
 
@@ -487,6 +485,7 @@ export default class Decimal {
             return this.mag * Number.POSITIVE_INFINITY;
         }
     }
+
     set e(value: number) {
         this.fromMantissaExponent(this.m, value);
     }
@@ -494,6 +493,7 @@ export default class Decimal {
     get s(): number {
         return this.sign;
     }
+
     set s(value: number) {
         if (value === 0) {
             this.sign = 0;
@@ -516,6 +516,7 @@ export default class Decimal {
     get exponent(): number {
         return this.e;
     }
+
     set exponent(value: number) {
         this.e = value;
     }
@@ -773,7 +774,7 @@ export default class Decimal {
      * unless 'floored' is true, in which case it uses the "floored" modulo, which is closer to how modulo works in number theory.
      * These two forms of modulo are the same when only positive numbers are involved, but differ in how they work with negative numbers.
      */
-    public static mod(value: DecimalSource, other: DecimalSource, floored : boolean = false): Decimal {
+    public static mod(value: DecimalSource, other: DecimalSource, floored: boolean = false): Decimal {
         return D(value).mod(other, floored);
     }
 
@@ -783,7 +784,7 @@ export default class Decimal {
      * unless 'floored' is true, in which case it uses the "floored" modulo, which is closer to how modulo works in number theory.
      * These two forms of modulo are the same when only positive numbers are involved, but differ in how they work with negative numbers.
      */
-    public static modulo(value: DecimalSource, other: DecimalSource, floored : boolean = false): Decimal {
+    public static modulo(value: DecimalSource, other: DecimalSource, floored: boolean = false): Decimal {
         return D(value).modulo(other, floored);
     }
 
@@ -793,7 +794,7 @@ export default class Decimal {
      * unless 'floored' is true, in which case it uses the "floored" modulo, which is closer to how modulo works in number theory.
      * These two forms of modulo are the same when only positive numbers are involved, but differ in how they work with negative numbers.
      */
-    public static modular(value: DecimalSource, other: DecimalSource, floored : boolean = false): Decimal {
+    public static modular(value: DecimalSource, other: DecimalSource, floored: boolean = false): Decimal {
         return D(value).modular(other, floored);
     }
 
@@ -951,7 +952,7 @@ export default class Decimal {
     public static cmp_tolerance(
         value: DecimalSource,
         other: DecimalSource,
-        tolerance: number
+        tolerance: number,
     ): CompareResult {
         return D(value).cmp_tolerance(other, tolerance);
     }
@@ -966,7 +967,7 @@ export default class Decimal {
     public static compare_tolerance(
         value: DecimalSource,
         other: DecimalSource,
-        tolerance: number
+        tolerance: number,
     ): CompareResult {
         return D(value).cmp_tolerance(other, tolerance);
     }
@@ -980,7 +981,7 @@ export default class Decimal {
     public static eq_tolerance(
         value: DecimalSource,
         other: DecimalSource,
-        tolerance: number
+        tolerance: number,
     ): boolean {
         return D(value).eq_tolerance(other, tolerance);
     }
@@ -994,7 +995,7 @@ export default class Decimal {
     public static equals_tolerance(
         value: DecimalSource,
         other: DecimalSource,
-        tolerance: number
+        tolerance: number,
     ): boolean {
         return D(value).eq_tolerance(other, tolerance);
     }
@@ -1008,7 +1009,7 @@ export default class Decimal {
     public static neq_tolerance(
         value: DecimalSource,
         other: DecimalSource,
-        tolerance: number
+        tolerance: number,
     ): boolean {
         return D(value).neq_tolerance(other, tolerance);
     }
@@ -1022,7 +1023,7 @@ export default class Decimal {
     public static notEquals_tolerance(
         value: DecimalSource,
         other: DecimalSource,
-        tolerance: number
+        tolerance: number,
     ): boolean {
         return D(value).notEquals_tolerance(other, tolerance);
     }
@@ -1037,7 +1038,7 @@ export default class Decimal {
     public static lt_tolerance(
         value: DecimalSource,
         other: DecimalSource,
-        tolerance: number
+        tolerance: number,
     ): boolean {
         return D(value).lt_tolerance(other, tolerance);
     }
@@ -1052,7 +1053,7 @@ export default class Decimal {
     public static lte_tolerance(
         value: DecimalSource,
         other: DecimalSource,
-        tolerance: number
+        tolerance: number,
     ): boolean {
         return D(value).lte_tolerance(other, tolerance);
     }
@@ -1067,7 +1068,7 @@ export default class Decimal {
     public static gt_tolerance(
         value: DecimalSource,
         other: DecimalSource,
-        tolerance: number
+        tolerance: number,
     ): boolean {
         return D(value).gt_tolerance(other, tolerance);
     }
@@ -1082,7 +1083,7 @@ export default class Decimal {
     public static gte_tolerance(
         value: DecimalSource,
         other: DecimalSource,
-        tolerance: number
+        tolerance: number,
     ): boolean {
         return D(value).gte_tolerance(other, tolerance);
     }
@@ -1233,7 +1234,7 @@ export default class Decimal {
         value: DecimalSource,
         height = 2,
         payload: DecimalSource = FC_NN(1, 0, 1),
-        linear = false
+        linear = false,
     ): Decimal {
         return D(value).tetrate(height, payload, linear);
     }
@@ -1284,7 +1285,7 @@ export default class Decimal {
      * If you want to use the linear approximation even for bases <= 10, set the linear parameter to true.
      * Analytic approximation is not currently supported for bases > 10.
      */
-    public static layeradd(value: DecimalSource, diff: number, base : DecimalSource = 10, linear = false): Decimal {
+    public static layeradd(value: DecimalSource, diff: number, base: DecimalSource = 10, linear = false): Decimal {
         return D(value).layeradd(diff, base, linear);
     }
 
@@ -1300,7 +1301,7 @@ export default class Decimal {
      * If you want to use the linear approximation even for bases <= 10, set the linear parameter to true.
      * Analytic approximation is not currently supported for bases > 10.
      */
-    public static slog(value: DecimalSource, base : DecimalSource = 10, linear = false): Decimal {
+    public static slog(value: DecimalSource, base: DecimalSource = 10, linear = false): Decimal {
         return D(value).slog(base, 100, linear);
     }
 
@@ -1312,7 +1313,7 @@ export default class Decimal {
      * W_0 works for any number >= -1/e, but W_-1 only works for negative numbers >= -1/e.
      * The "principal" parameter, which is true by default, decides which branch we're looking for: W_0 is used if principal is true, W_-1 is used if principal is false.
      */
-    public static lambertw(value: DecimalSource, principal : boolean): Decimal {
+    public static lambertw(value: DecimalSource, principal: boolean): Decimal {
         return D(value).lambertw(principal);
     }
 
@@ -1348,7 +1349,7 @@ export default class Decimal {
         value: DecimalSource,
         height = 2,
         payload: DecimalSource = FC_NN(1, 0, 1),
-        linear = false
+        linear = false,
     ): Decimal {
         return D(value).pentate(height, payload, linear);
     }
@@ -1367,7 +1368,7 @@ export default class Decimal {
      *
      * For non-whole pentation heights, the linear approximation of pentation is always used, as there is no defined analytic approximation of pentation.
      */
-    public static penta_log(value: DecimalSource, base : DecimalSource = 10, linear = false): Decimal {
+    public static penta_log(value: DecimalSource, base: DecimalSource = 10, linear = false): Decimal {
         return D(value).penta_log(base, 100, linear);
     }
 
@@ -1475,15 +1476,16 @@ export default class Decimal {
         resourcesAvailable: DecimalSource,
         priceStart: DecimalSource,
         priceRatio: DecimalSource,
-        currentOwned: DecimalSource
+        currentOwned: DecimalSource,
     ): Decimal {
         return this.affordGeometricSeries_core(
             D(resourcesAvailable),
             D(priceStart),
             D(priceRatio),
-            currentOwned
+            currentOwned,
         );
     }
+
     /**
      * How much resource would it cost to buy (numItems) items if you already have currentOwned,
      * the initial price is priceStart and it multiplies by priceRatio each purchase?
@@ -1493,10 +1495,11 @@ export default class Decimal {
         numItems: DecimalSource,
         priceStart: DecimalSource,
         priceRatio: DecimalSource,
-        currentOwned: DecimalSource
+        currentOwned: DecimalSource,
     ): Decimal {
         return this.sumGeometricSeries_core(numItems, D(priceStart), D(priceRatio), currentOwned);
     }
+
     /**
      * If you're willing to spend 'resourcesAvailable' and want to buy something with additively
      * increasing cost each purchase (start at priceStart, add by priceAdd, already own currentOwned),
@@ -1507,15 +1510,16 @@ export default class Decimal {
         resourcesAvailable: DecimalSource,
         priceStart: DecimalSource,
         priceAdd: DecimalSource,
-        currentOwned: DecimalSource
+        currentOwned: DecimalSource,
     ): Decimal {
         return this.affordArithmeticSeries_core(
             D(resourcesAvailable),
             D(priceStart),
             D(priceAdd),
-            D(currentOwned)
+            D(currentOwned),
         );
     }
+
     /**
      * How much resource would it cost to buy (numItems) items if you already have currentOwned,
      * the initial price is priceStart and it adds priceAdd each purchase?
@@ -1526,10 +1530,11 @@ export default class Decimal {
         numItems: DecimalSource,
         priceStart: DecimalSource,
         priceAdd: DecimalSource,
-        currentOwned: DecimalSource
+        currentOwned: DecimalSource,
     ): Decimal {
         return this.sumArithmeticSeries_core(D(numItems), D(priceStart), D(priceAdd), D(currentOwned));
     }
+
     /**
      * When comparing two purchases that cost (resource) and increase your resource/sec by (deltaRpS),
      * the lowest efficiency score is the better one to purchase.
@@ -1540,7 +1545,7 @@ export default class Decimal {
     public static efficiencyOfPurchase(
         cost: DecimalSource,
         currentRpS: DecimalSource,
-        deltaRpS: DecimalSource
+        deltaRpS: DecimalSource,
     ): Decimal {
         return this.efficiencyOfPurchase_core(D(cost), D(currentRpS), D(deltaRpS));
     }
@@ -1579,7 +1584,7 @@ export default class Decimal {
         resourcesAvailable: Decimal,
         priceStart: Decimal,
         priceRatio: Decimal,
-        currentOwned: DecimalSource
+        currentOwned: DecimalSource,
     ): Decimal {
         const actualStart = priceStart.mul(priceRatio.pow(currentOwned));
         return Decimal.floor(
@@ -1588,7 +1593,7 @@ export default class Decimal {
                 .mul(priceRatio.sub(1))
                 .add(1)
                 .log10()
-                .div(priceRatio.log10())
+                .div(priceRatio.log10()),
         );
     }
 
@@ -1596,7 +1601,7 @@ export default class Decimal {
         numItems: DecimalSource,
         priceStart: Decimal,
         priceRatio: Decimal,
-        currentOwned: DecimalSource
+        currentOwned: DecimalSource,
     ): Decimal {
         return priceStart
             .mul(priceRatio.pow(currentOwned))
@@ -1608,7 +1613,7 @@ export default class Decimal {
         resourcesAvailable: Decimal,
         priceStart: Decimal,
         priceAdd: Decimal,
-        currentOwned: Decimal
+        currentOwned: Decimal,
     ): Decimal {
         // n = (-(a-d/2) + sqrt((a-d/2)^2+2dS))/d
         // where a is actualStart, d is priceAdd and S is resourcesAvailable
@@ -1627,7 +1632,7 @@ export default class Decimal {
         numItems: Decimal,
         priceStart: Decimal,
         priceAdd: Decimal,
-        currentOwned: Decimal
+        currentOwned: Decimal,
     ): Decimal {
         const actualStart = priceStart.add(currentOwned.mul(priceAdd)); // (n/2)*(2*a+(n-1)*d)
 
@@ -1637,7 +1642,7 @@ export default class Decimal {
     public static efficiencyOfPurchase_core(
         cost: Decimal,
         currentRpS: Decimal,
-        deltaRpS: Decimal
+        deltaRpS: Decimal,
     ): Decimal {
         return cost.div(currentRpS).add(cost.div(deltaRpS));
     }
@@ -1649,20 +1654,20 @@ export default class Decimal {
      */
     public normalize(): this {
         /*
-    PSEUDOCODE:
-    Whenever we are partially 0 (sign is 0 or mag and layer is 0), make it fully 0.
-    Whenever we are at or hit layer 0, extract sign from negative mag.
-    If layer === 0 and mag < FIRST_NEG_LAYER (1/9e15), shift to 'first negative layer' (add layer, log10 mag).
-    While abs(mag) > EXP_LIMIT (9e15), layer += 1, mag = maglog10(mag).
-    While abs(mag) < LAYER_DOWN (15.954) and layer > 0, layer -= 1, mag = pow(10, mag).
+         PSEUDOCODE:
+         Whenever we are partially 0 (sign is 0 or mag and layer is 0), make it fully 0.
+         Whenever we are at or hit layer 0, extract sign from negative mag.
+         If layer === 0 and mag < FIRST_NEG_LAYER (1/9e15), shift to 'first negative layer' (add layer, log10 mag).
+         While abs(mag) > EXP_LIMIT (9e15), layer += 1, mag = maglog10(mag).
+         While abs(mag) < LAYER_DOWN (15.954) and layer > 0, layer -= 1, mag = pow(10, mag).
 
-    When we're done, all of the following should be true OR one of the numbers is not IsFinite OR layer is not IsInteger (error state):
-    Any 0 is totally zero (0, 0, 0) and any NaN is totally NaN (NaN, NaN, NaN).
-    Anything layer 0 has mag 0 OR mag > 1/9e15 and < 9e15.
-    Anything layer 1 or higher has abs(mag) >= 15.954 and < 9e15.
-    Any positive infinity is (1, Infinity, Infinity) and any negative infinity is (-1, Infinity, Infinity).
-    We will assume in calculations that all Decimals are either erroneous or satisfy these criteria. (Otherwise: Garbage in, garbage out.)
-    */
+         When we're done, all of the following should be true OR one of the numbers is not IsFinite OR layer is not IsInteger (error state):
+         Any 0 is totally zero (0, 0, 0) and any NaN is totally NaN (NaN, NaN, NaN).
+         Anything layer 0 has mag 0 OR mag > 1/9e15 and < 9e15.
+         Anything layer 1 or higher has abs(mag) >= 15.954 and < 9e15.
+         Any positive infinity is (1, Infinity, Infinity) and any negative infinity is (-1, Infinity, Infinity).
+         We will assume in calculations that all Decimals are either erroneous or satisfy these criteria. (Otherwise: Garbage in, garbage out.)
+         */
 
         //Any 0 is totally 0
         if (this.sign === 0 || (this.mag === 0 && this.layer === 0) || (this.mag === Number.NEGATIVE_INFINITY && this.layer > 0 && Number.isFinite(this.layer))) {
@@ -2564,14 +2569,14 @@ export default class Decimal {
 
         if (a.layer === 2 && b.layer === 1) {
             const newmag = FC(Math.sign(a.mag), a.layer - 1, Math.abs(a.mag)).add(
-                FC(Math.sign(b.mag), b.layer - 1, Math.abs(b.mag))
+                FC(Math.sign(b.mag), b.layer - 1, Math.abs(b.mag)),
             );
             return FC(a.sign * b.sign, newmag.layer + 1, newmag.sign * newmag.mag);
         }
 
         if (a.layer === 2 && b.layer === 2) {
             const newmag = FC(Math.sign(a.mag), a.layer - 1, Math.abs(a.mag)).add(
-                FC(Math.sign(b.mag), b.layer - 1, Math.abs(b.mag))
+                FC(Math.sign(b.mag), b.layer - 1, Math.abs(b.mag)),
             );
             return FC(a.sign * b.sign, newmag.layer + 1, newmag.sign * newmag.mag);
         }
@@ -2628,11 +2633,9 @@ export default class Decimal {
     public recip(): Decimal {
         if (this.mag === 0) {
             return new Decimal(Decimal.dNaN);
-        }
-        else if (this.mag === Number.POSITIVE_INFINITY) {
+        } else if (this.mag === Number.POSITIVE_INFINITY) {
             return FC_NN(0, 0, 0);
-        }
-        else if (this.layer === 0) {
+        } else if (this.layer === 0) {
             return FC(this.sign, 0, 1 / this.mag);
         } else {
             return FC(this.sign, this.layer, -this.mag);
@@ -2660,7 +2663,7 @@ export default class Decimal {
      * These two forms of modulo are the same when only positive numbers are involved, but differ in how they work with negative numbers.
      */
     //Taken from OmegaNum.js, with a couple touch-ups
-    public mod(value: DecimalSource, floored : boolean = false): Decimal {
+    public mod(value: DecimalSource, floored: boolean = false): Decimal {
         const vd = D(value);
         const decimal = vd.abs();
 
@@ -2694,7 +2697,7 @@ export default class Decimal {
      * unless 'floored' is true, in which case it uses the "floored" modulo, which is closer to how modulo works in number theory.
      * These two forms of modulo are the same when only positive numbers are involved, but differ in how they work with negative numbers.
      */
-    public modulo(value: DecimalSource, floored : boolean = false) : Decimal {
+    public modulo(value: DecimalSource, floored: boolean = false): Decimal {
         return this.mod(value, floored);
     }
 
@@ -2704,7 +2707,7 @@ export default class Decimal {
      * unless 'floored' is true, in which case it uses the "floored" modulo, which is closer to how modulo works in number theory.
      * These two forms of modulo are the same when only positive numbers are involved, but differ in how they work with negative numbers.
      */
-    public modular(value: DecimalSource, floored : boolean = false) : Decimal {
+    public modular(value: DecimalSource, floored: boolean = false): Decimal {
         return this.mod(value, floored);
     }
 
@@ -3150,12 +3153,12 @@ export default class Decimal {
      */
     public pow10(): Decimal {
         /*
-    There are four cases we need to consider:
-    1) positive sign, positive mag (e15, ee15): +1 layer (e.g. 10^15 becomes e15, 10^e15 becomes ee15)
-    2) negative sign, positive mag (-e15, -ee15): +1 layer but sign and mag sign are flipped (e.g. 10^-15 becomes e-15, 10^-e15 becomes ee-15)
-    3) positive sign, negative mag (e-15, ee-15): layer 0 case would have been handled in the Math.pow check, so just return 1
-    4) negative sign, negative mag (-e-15, -ee-15): layer 0 case would have been handled in the Math.pow check, so just return 1
-    */
+         There are four cases we need to consider:
+         1) positive sign, positive mag (e15, ee15): +1 layer (e.g. 10^15 becomes e15, 10^e15 becomes ee15)
+         2) negative sign, positive mag (-e15, -ee15): +1 layer but sign and mag sign are flipped (e.g. 10^-15 becomes e-15, 10^-e15 becomes ee-15)
+         3) positive sign, negative mag (e-15, ee-15): layer 0 case would have been handled in the Math.pow check, so just return 1
+         4) negative sign, negative mag (-e-15, -ee-15): layer 0 case would have been handled in the Math.pow check, so just return 1
+         */
 
         if (this.eq(Decimal.dInf)) {
             return new Decimal(Decimal.dInf);
@@ -3339,7 +3342,7 @@ export default class Decimal {
      * Cube root: finds the Decimal X such that X^3 equals 'this'. Equivalent to X^(1/3).
      */
     public cbrt(): Decimal {
-        if (this.lt(0)) return this.neg().pow(1/3).neg();
+        if (this.lt(0)) return this.neg().pow(1 / 3).neg();
         return this.pow(1 / 3);
     }
 
@@ -3458,11 +3461,9 @@ export default class Decimal {
             } else {
                 if (this.eq(10)) {
                     payload = payload.layeradd10(fracheight, linear);
-                }
-                else if (this.lt(1)) {
+                } else if (this.lt(1)) {
                     payload = payload.pow(1 - fracheight).mul(this.pow(payload).pow(fracheight));
-                }
-                else {
+                } else {
                     payload = payload.layeradd(fracheight, this, linear);
                 }
             }
@@ -3566,24 +3567,18 @@ export default class Decimal {
         let has_changed_directions_once = false;
         let previously_rose = false;
         let result = this.slog_internal(base, linear).toNumber();
-        for (var i = 1; i < iterations; ++i)
-        {
+        for (var i = 1; i < iterations; ++i) {
             let new_decimal = new Decimal(base).tetrate(result, Decimal.dOne, linear);
             let currently_rose = new_decimal.gt(this);
-            if (i > 1)
-            {
-                if (previously_rose != currently_rose)
-                {
+            if (i > 1) {
+                if (previously_rose != currently_rose) {
                     has_changed_directions_once = true;
                 }
             }
             previously_rose = currently_rose;
-            if (has_changed_directions_once)
-            {
+            if (has_changed_directions_once) {
                 step_size /= 2;
-            }
-            else
-            {
+            } else {
                 step_size *= 2;
             }
             step_size = Math.abs(step_size) * (currently_rose ? -1 : 1);
@@ -3708,13 +3703,10 @@ export default class Decimal {
         //improvement - you get more accuracy (especially around 0.9-1.0) by doing log, then frac, then powing the result
         //(we could pre-log the lookup table, but then fractional bases would get Weird)
         //also, use old linear for slog (values 0 or less in critical section). maybe something else is better but haven't thought about what yet
-        if (lower <= 0 || upper <= 0)
-        {
+        if (lower <= 0 || upper <= 0) {
             return lower * (1 - frac) + upper * frac;
-        }
-        else
-        {
-            return Math.pow(base, (Math.log(lower)/Math.log(base)) * (1 - frac) + (Math.log(upper)/Math.log(base)) * frac );
+        } else {
+            return Math.pow(base, (Math.log(lower) / Math.log(base)) * (1 - frac) + (Math.log(upper) / Math.log(base)) * frac);
         }
     }
 
@@ -3844,7 +3836,7 @@ export default class Decimal {
      * The values returned by this function don't really have much mathematical meaning, but the difference between two values does.
      * Therefore, this function is kept private, but it's used for layeradd on these small bases.
      */
-    private static excess_slog(value : DecimalSource, base : DecimalSource, linear = false) : [Decimal, 0 | 1 | 2] {
+    private static excess_slog(value: DecimalSource, base: DecimalSource, linear = false): [Decimal, 0 | 1 | 2] {
         value = D(value);
         base = D(base);
         let baseD = base;
@@ -3882,8 +3874,7 @@ export default class Decimal {
                     payload = payload.log(base);
                     estimate = estimate - 1;
                 }
-            }
-            else if (value.lt(slogzero)) {
+            } else if (value.lt(slogzero)) {
                 let payload = slogzero;
                 estimate = 0;
                 while (payload.gt(value)) {
@@ -3895,10 +3886,10 @@ export default class Decimal {
             let tested = 0;
             let step_size = 0.5;
             let towertop = slogzero;
-            let guess : Decimal = Decimal.dZero;
+            let guess: Decimal = Decimal.dZero;
             while (step_size > 1e-16) {
                 tested = fracheight + step_size;
-                towertop = slogzero.pow(1 - tested).mul(slogone.pow(tested)) //Weighted geometric average
+                towertop = slogzero.pow(1 - tested).mul(slogone.pow(tested)); //Weighted geometric average
                 guess = Decimal.iteratedexp(base, estimate, towertop);
                 if (guess.eq(value)) return [new Decimal(estimate + tested), 2];
                 else if (guess.lt(value)) fracheight += step_size;
@@ -3923,8 +3914,7 @@ export default class Decimal {
                     payload = payload.log(base);
                     estimate = estimate - 1;
                 }
-            }
-            else if (value.gt(slogzero)) {
+            } else if (value.gt(slogzero)) {
                 let payload = slogzero;
                 estimate = 0;
                 while (payload.lt(value)) {
@@ -3936,10 +3926,10 @@ export default class Decimal {
             let tested = 0;
             let step_size = 0.5;
             let towertop = slogzero;
-            let guess : Decimal = Decimal.dZero;
+            let guess: Decimal = Decimal.dZero;
             while (step_size > 1e-16) {
                 tested = fracheight + step_size;
-                towertop = slogzero.pow(1 - tested).mul(slogone.pow(tested)) //Weighted geometric average
+                towertop = slogzero.pow(1 - tested).mul(slogone.pow(tested)); //Weighted geometric average
                 guess = Decimal.iteratedexp(base, estimate, towertop);
                 if (guess.eq(value)) return [new Decimal(estimate + tested), 1];
                 else if (guess.gt(value)) fracheight += step_size;
@@ -3963,8 +3953,7 @@ export default class Decimal {
     public lambertw(principal = true): Decimal {
         if (this.lt(-0.3678794411710499)) {
             return new Decimal(Decimal.dNaN); //complex
-        }
-        else if (principal) {
+        } else if (principal) {
             if (this.abs().lt("1e-300")) return new Decimal(this);
             else if (this.mag < 0) {
                 return Decimal.fromNumber(f_lambertw(this.toNumber()));
@@ -3975,18 +3964,15 @@ export default class Decimal {
             } else { // Numbers this large would sometimes fail to converge using d_lambertw, and at this size this.ln() is close enough
                 return this.ln();
             }
-        }
-        else {
+        } else {
             if (this.sign === 1) {
                 return new Decimal(Decimal.dNaN); //complex
             }
             if (this.layer === 0) {
                 return Decimal.fromNumber(f_lambertw(this.sign * this.mag, 1e-10, false));
-            }
-            else if (this.layer == 1) {
+            } else if (this.layer == 1) {
                 return d_lambertw(this, 1e-10, false);
-            }
-            else {
+            } else {
                 return this.neg().recip().lambertw().neg();
             }
         }
@@ -4007,7 +3993,7 @@ export default class Decimal {
      */
     //Another reason this doesn't support analytic approximation because I don't know the structure of non-linear tetrations for inputs < 1
     //TODO: Optimize this like how slog is optimized (if it isn't already)
-    public linear_sroot(degree: number) : Decimal {
+    public linear_sroot(degree: number): Decimal {
         //1st-degree super root just returns its input
         if (degree == 1) {
             return this;
@@ -4035,8 +4021,7 @@ export default class Decimal {
             const this_num = this.toNumber();
             if (this_num < Math.E && this_num > _EXPN1) {
                 return this.pow(this.recip());
-            }
-            else {
+            } else {
                 return new Decimal(Decimal.dNaN);
             }
         }
@@ -4137,15 +4122,13 @@ export default class Decimal {
                         distance = Decimal.dZero;
                         range = -1; //This would cause problems with degree < 1 in the linear approximation... but those are already covered as a special case
                         if (stage == 3) lastValid = upper;
-                    }
-                    else if (upper.pow10().recip().tetrate(degree, 1, true).eq(upper.pow10().recip()) && !evenDegree && upper.pow10().recip().lt(0.4)) {
+                    } else if (upper.pow10().recip().tetrate(degree, 1, true).eq(upper.pow10().recip()) && !evenDegree && upper.pow10().recip().lt(0.4)) {
                         upperBound = upper.pow10().recip();
                         prevPoint = upper.pow10().recip();
                         nextPoint = upper.pow10().recip();
                         distance = Decimal.dZero;
                         range = 0;
-                    }
-                    else if (upper.pow10().recip().tetrate(degree, 1, true).eq(upper.pow10().recip().mul(2).tetrate(degree, 1, true))) {
+                    } else if (upper.pow10().recip().tetrate(degree, 1, true).eq(upper.pow10().recip().mul(2).tetrate(degree, 1, true))) {
                         //If the upper bound is closer to zero than the next point with a discernable tetration, so surely it's in whichever range is closest to zero?
                         //This won't happen in a strictly increasing tetration, as there x^^degree ~= x as x approaches zero
                         upperBound = upper.pow10().recip();
@@ -4154,8 +4137,7 @@ export default class Decimal {
                         distance = upperBound;
                         if (evenDegree) range = -1;
                         else range = 0;
-                    }
-                    else {
+                    } else {
                         //We want to use prevspan to find the "previous point" right before the upper bound and the "next point" right after the upper bound, as that will let us approximate derivatives
                         prevspan = upper.mul(1.2e-16);
                         upperBound = upper.pow10().recip();
@@ -4180,16 +4162,13 @@ export default class Decimal {
                         if (nextPoint.tetrate(degree, 1, true).lt(upperBound.tetrate(degree, 1, true))) {
                             //Derivative is negative, so we're in decreasing range
                             range = -1;
-                        }
-                        else if (evenDegree) {
+                        } else if (evenDegree) {
                             //No zero range, so we're in increasing range
                             range = 1;
-                        }
-                        else if (stage == 3 && upper.gt_tolerance(minimum, 1e-8)) {
+                        } else if (stage == 3 && upper.gt_tolerance(minimum, 1e-8)) {
                             //We're already below the minimum, so we can't be in range 1
                             range = 0;
-                        }
-                        else {
+                        } else {
                             //Number imprecision has left the second derivative somewhat untrustworthy, so we need to expand the bounds to ensure it's correct
                             while (prevPoint.tetrate(degree, 1, true).eq_tolerance(upperBound.tetrate(degree, 1, true), 1e-8) || nextPoint.tetrate(degree, 1, true).eq_tolerance(upperBound.tetrate(degree, 1, true), 1e-8) || prevPoint.gte(upperBound) || nextPoint.lte(upperBound)) {
                                 prevspan = prevspan.mul(2);
@@ -4200,8 +4179,7 @@ export default class Decimal {
                             if (nextPoint.tetrate(degree, 1, true).sub(upperBound.tetrate(degree, 1, true)).lt(upperBound.tetrate(degree, 1, true).sub(prevPoint.tetrate(degree, 1, true)))) {
                                 //Second derivative is negative, so we're in zero range
                                 range = 0;
-                            }
-                            else {
+                            } else {
                                 //By process of elimination, we're in increasing range
                                 range = 1;
                             }
@@ -4212,21 +4190,18 @@ export default class Decimal {
                         //The upper bound is too high
                         if (lower.eq(FC(1, 10, 1))) {
                             upper = upper.mul(2);
-                        }
-                        else {
+                        } else {
                             let cutOff = false;
                             if (infLoopDetector && ((range == 1 && stage == 1) || (range == -1 && stage == 3))) cutOff = true; //Avoids infinite loops from floating point imprecision
                             upper = upper.add(lower).div(2);
                             if (cutOff) break;
                         }
-                    }
-                    else {
+                    } else {
                         if (lower.eq(FC(1, 10, 1))) {
                             //We've now found an actual lower bound
                             lower = upper;
                             upper = upper.div(2);
-                        }
-                        else {
+                        } else {
                             //The upper bound is too low, meaning last time we decreased the upper bound, we should have gone to the other half of the new range instead
                             let cutOff = false;
                             if (infLoopDetector && ((range == 1 && stage == 1) || (range == -1 && stage == 3))) cutOff = true; //Avoids infinite loops from floating point imprecision
@@ -4269,8 +4244,7 @@ export default class Decimal {
             //using guess.neq(minimum) led to imprecision errors, so here's a fixed version of that
             if (!(guess.eq_tolerance(minimum, 1e-15))) {
                 return guess.pow10().recip();
-            }
-            else {
+            } else {
                 //If guess == minimum, we haven't actually found the super-root, the algorithm just kept going down trying to find a super-root that's not in the increasing range.
                 //Check if the root is in the zero range.
                 if (maximum.eq(FC(1, 10, 1))) {
@@ -4315,15 +4289,15 @@ export default class Decimal {
      * @param maxY If the input to the inverse function is above this value, the inverse function assumes the input is not in the range and returns NaN. Is Decimal.dLayerMax by default, which means all positive finite values are allowed but infinity is not.
      */
     public static increasingInverse(
-        func : (((value : DecimalSource) => Decimal) | ((value : Decimal) => Decimal)),
+        func: (((value: DecimalSource) => Decimal) | ((value: Decimal) => Decimal)),
         decreasing = false,
         iterations = 120,
-        minX : DecimalSource = Decimal.dLayerMax.neg(),
-        maxX : DecimalSource = Decimal.dLayerMax,
-        minY : DecimalSource = Decimal.dLayerMax.neg(),
-        maxY : DecimalSource = Decimal.dLayerMax,
+        minX: DecimalSource = Decimal.dLayerMax.neg(),
+        maxX: DecimalSource = Decimal.dLayerMax,
+        minY: DecimalSource = Decimal.dLayerMax.neg(),
+        maxY: DecimalSource = Decimal.dLayerMax,
     ) {
-        return function(value : DecimalSource) : Decimal {
+        return function (value: DecimalSource): Decimal {
             value = new Decimal(value);
             minX = new Decimal(minX);
             maxX = new Decimal(maxX);
@@ -4333,7 +4307,7 @@ export default class Decimal {
             if (value.isNan() || maxX.lt(minX) || value.lt(minY) || value.gt(maxY)) return new Decimal(Decimal.dNaN);
 
             // Before actually doing the search, let's determine what range we're looking at. First-class function shenanigans incoming.
-            let rangeApply = function(value : DecimalSource){return new Decimal(value);}
+            let rangeApply = function (value: DecimalSource) {return new Decimal(value);};
             let currentCheck = true; // Checking whether the inverse is positive
             if (maxX.lt(0)) currentCheck = false;
             else if (minX.gt(0)) currentCheck = true;
@@ -4366,7 +4340,7 @@ export default class Decimal {
                         if (decreasing) currentCheck = !currentCheck;
                     }
                     // If the inverse is between 1/e9e15 and 1/9e15, search through layer -1 numbers.
-                    if (currentCheck) rangeApply = function(value : DecimalSource){return Decimal.pow(10, value).recip();}
+                    if (currentCheck) rangeApply = function (value: DecimalSource) {return Decimal.pow(10, value).recip();};
                     else {
                         // Checking whether the inverse is above 1/10^^9e15
                         let limit = Decimal.tetrate(10, EXP_LIMIT);
@@ -4378,13 +4352,12 @@ export default class Decimal {
                             if (decreasing) currentCheck = !currentCheck;
                         }
                         // If the inverse is between 1/10^^9e15 and 1/e9e15, search through reciprocals of negative layers themselves.
-                        if (currentCheck) rangeApply = function(value : DecimalSource){return Decimal.tetrate(10, new Decimal(value).toNumber()).recip();}
+                        if (currentCheck) rangeApply = function (value: DecimalSource) {return Decimal.tetrate(10, new Decimal(value).toNumber()).recip();};
                         // If the inverse is below 1/10^^9e15, search through reciprocals of exponents of layers.
-                        else rangeApply = function(value : DecimalSource){return (new Decimal(value).gt(Math.log10(Number.MAX_VALUE)) ? Decimal.dZero : Decimal.tetrate(10, Decimal.pow(10, value).toNumber()).recip())}
+                        else rangeApply = function (value: DecimalSource) {return (new Decimal(value).gt(Math.log10(Number.MAX_VALUE)) ? Decimal.dZero : Decimal.tetrate(10, Decimal.pow(10, value).toNumber()).recip());};
                     }
-                }
-                else {
-                    reciprocal = false
+                } else {
+                    reciprocal = false;
                     // Checking whether the inverse is below 9e15
                     if (maxX.lt(EXP_LIMIT)) currentCheck = true;
                     else if (minX.gt(EXP_LIMIT)) currentCheck = false;
@@ -4394,7 +4367,7 @@ export default class Decimal {
                         if (decreasing) currentCheck = !currentCheck;
                     }
                     // If the inverse is between 1/9e15 and 9e15, search through direct (layer 0) numbers.
-                    if (currentCheck) rangeApply = function(value : DecimalSource){return new Decimal(value);}
+                    if (currentCheck) rangeApply = function (value: DecimalSource) {return new Decimal(value);};
                     else {
                         // Checking whether the inverse is below e9e15
                         let limit = Decimal.pow(10, EXP_LIMIT);
@@ -4406,7 +4379,7 @@ export default class Decimal {
                             if (decreasing) currentCheck = !currentCheck;
                         }
                         // If the inverse is between 9e15 and e9e15, search through layer 1 numbers.
-                        if (currentCheck) rangeApply = function(value : DecimalSource){return Decimal.pow(10, value);}
+                        if (currentCheck) rangeApply = function (value: DecimalSource) {return Decimal.pow(10, value);};
                         else {
                             // Checking whether the inverse is below 10^^9e15
                             let limit = Decimal.tetrate(10, EXP_LIMIT);
@@ -4418,15 +4391,14 @@ export default class Decimal {
                                 if (decreasing) currentCheck = !currentCheck;
                             }
                             // If the inverse is between e9e15 and 10^^9e15, search through layers themselves.
-                            if (currentCheck) rangeApply = function(value : DecimalSource){return Decimal.tetrate(10, new Decimal(value).toNumber());}
+                            if (currentCheck) rangeApply = function (value: DecimalSource) {return Decimal.tetrate(10, new Decimal(value).toNumber());};
                             // If the inverse is above 10^^9e15, search through exponents of layers.
-                            else rangeApply = function(value : DecimalSource){return (new Decimal(value).gt(Math.log10(Number.MAX_VALUE)) ? Decimal.dInf : Decimal.tetrate(10, Decimal.pow(10, value).toNumber()))}
+                            else rangeApply = function (value: DecimalSource) {return (new Decimal(value).gt(Math.log10(Number.MAX_VALUE)) ? Decimal.dInf : Decimal.tetrate(10, Decimal.pow(10, value).toNumber()));};
                         }
                     }
                 }
-            }
-            else {
-                reciprocal = true
+            } else {
+                reciprocal = true;
                 // Checking whether the inverse is above -1/9e15
                 if (maxX.lt(-FIRST_NEG_LAYER)) currentCheck = false;
                 else if (minX.gt(-FIRST_NEG_LAYER)) currentCheck = true;
@@ -4446,7 +4418,7 @@ export default class Decimal {
                         if (decreasing) currentCheck = !currentCheck;
                     }
                     // If the inverse is between -1/e9e15 and -1/9e15, search through negatives of layer -1 numbers.
-                    if (currentCheck) rangeApply = function(value : DecimalSource){return Decimal.pow(10, value).recip().neg();}
+                    if (currentCheck) rangeApply = function (value: DecimalSource) {return Decimal.pow(10, value).recip().neg();};
                     else {
                         // Checking whether the inverse is below -1/10^^9e15
                         let limit = Decimal.tetrate(10, EXP_LIMIT).neg();
@@ -4458,12 +4430,11 @@ export default class Decimal {
                             if (decreasing) currentCheck = !currentCheck;
                         }
                         // If the inverse is between -1/10^^9e15 and -1/e9e15, search through reciprocals of negative layers themselves.
-                        if (currentCheck) rangeApply = function(value : DecimalSource){return Decimal.tetrate(10, new Decimal(value).toNumber()).recip().neg();}
+                        if (currentCheck) rangeApply = function (value: DecimalSource) {return Decimal.tetrate(10, new Decimal(value).toNumber()).recip().neg();};
                         // If the inverse is above -1/10^^9e15, search through exponents of reciprocals of negative layers.
-                        else rangeApply = function(value : DecimalSource){return (new Decimal(value).gt(Math.log10(Number.MAX_VALUE)) ? Decimal.dZero : Decimal.tetrate(10, Decimal.pow(10, value).toNumber()).recip().neg())}
+                        else rangeApply = function (value: DecimalSource) {return (new Decimal(value).gt(Math.log10(Number.MAX_VALUE)) ? Decimal.dZero : Decimal.tetrate(10, Decimal.pow(10, value).toNumber()).recip().neg());};
                     }
-                }
-                else {
+                } else {
                     reciprocal = false;
                     // Checking whether the inverse is above -9e15
                     if (maxX.lt(-EXP_LIMIT)) currentCheck = false;
@@ -4474,7 +4445,7 @@ export default class Decimal {
                         if (decreasing) currentCheck = !currentCheck;
                     }
                     // If the inverse is between -1/9e15 and -9e15, search through negatives of direct (layer 0) numbers.
-                    if (currentCheck) rangeApply = function(value : DecimalSource){return Decimal.neg(value);}
+                    if (currentCheck) rangeApply = function (value: DecimalSource) {return Decimal.neg(value);};
                     else {
                         // Checking whether the inverse is above -e9e15
                         let limit = Decimal.pow(10, EXP_LIMIT).neg();
@@ -4486,7 +4457,7 @@ export default class Decimal {
                             if (decreasing) currentCheck = !currentCheck;
                         }
                         // If the inverse is between -9e15 and -e9e15, search through negatives of layer 1 numbers.
-                        if (currentCheck) rangeApply = function(value : DecimalSource){return Decimal.pow(10, value).neg();}
+                        if (currentCheck) rangeApply = function (value: DecimalSource) {return Decimal.pow(10, value).neg();};
                         else {
                             // Checking whether the inverse is above -10^^9e15
                             let limit = Decimal.tetrate(10, EXP_LIMIT).neg();
@@ -4498,15 +4469,15 @@ export default class Decimal {
                                 if (decreasing) currentCheck = !currentCheck;
                             }
                             // If the inverse is between e9e15 and 10^^9e15, search through negatives of layers themselves.
-                            if (currentCheck) rangeApply = function(value : DecimalSource){return Decimal.tetrate(10, new Decimal(value).toNumber()).neg();}
+                            if (currentCheck) rangeApply = function (value: DecimalSource) {return Decimal.tetrate(10, new Decimal(value).toNumber()).neg();};
                             // If the inverse is below -10^^9e15, search through negatives of exponents of layers.
-                            else rangeApply = function(value : DecimalSource){return (new Decimal(value).gt(Math.log10(Number.MAX_VALUE)) ? Decimal.dNegInf : Decimal.tetrate(10, Decimal.pow(10, value).toNumber()).neg())}
+                            else rangeApply = function (value: DecimalSource) {return (new Decimal(value).gt(Math.log10(Number.MAX_VALUE)) ? Decimal.dNegInf : Decimal.tetrate(10, Decimal.pow(10, value).toNumber()).neg());};
                         }
                     }
                 }
             }
             let searchIncreasing = ((positive != reciprocal) != decreasing);
-            let comparative = searchIncreasing ? (function(a : DecimalSource, b : DecimalSource){return Decimal.gt(a, b)}) : (function(a : DecimalSource, b : DecimalSource){return Decimal.lt(a, b)});
+            let comparative = searchIncreasing ? (function (a: DecimalSource, b: DecimalSource) {return Decimal.gt(a, b);}) : (function (a: DecimalSource, b: DecimalSource) {return Decimal.lt(a, b);});
 
             let step_size = 0.001;
             let has_changed_directions_once = false;
@@ -4515,8 +4486,7 @@ export default class Decimal {
             let appliedResult = Decimal.dOne;
             let oldresult = 0;
             let critical = false;
-            for (var i = 1; i < iterations; ++i)
-            {
+            for (var i = 1; i < iterations; ++i) {
                 critical = false;
                 oldresult = result;
                 appliedResult = rangeApply(result);
@@ -4532,20 +4502,15 @@ export default class Decimal {
                 let new_decimal = func(appliedResult);
                 if (new_decimal.eq(value) && !critical) { break; }
                 let currently_rose = comparative(new_decimal, value);
-                if (i > 1)
-                {
-                    if (previously_rose != currently_rose)
-                    {
+                if (i > 1) {
+                    if (previously_rose != currently_rose) {
                         has_changed_directions_once = true;
                     }
                 }
                 previously_rose = currently_rose;
-                if (has_changed_directions_once)
-                {
+                if (has_changed_directions_once) {
                     step_size /= 2;
-                }
-                else
-                {
+                } else {
                     step_size *= 2;
                 }
                 // If the inverse is trying to increase when it's already at maxX, or it's trying to decrease when it's already at minX, it's going outside the domain, so return NaN.
@@ -4555,7 +4520,7 @@ export default class Decimal {
                 if (step_size === 0 || oldresult == result) { break; }
             }
             return rangeApply(result);
-        }
+        };
     }
 
     /**
@@ -4589,7 +4554,7 @@ export default class Decimal {
         }
 
         if (height > 0) {
-            for (let i = 0; i < height; ) {
+            for (let i = 0; i < height;) {
                 prevtwopayload = prevpayload;
                 prevpayload = payload;
                 payload = this.tetrate(payload.toNumber(), Decimal.dOne, linear);
@@ -4608,8 +4573,7 @@ export default class Decimal {
                     return payload;
                 }
             }
-        }
-        else {
+        } else {
             // Repeated slog is sloooow, but that's what negative pentation height means. Since it's just calling slog repeatedly anyway (without any layer shortcuts), I see no reason to make this its own function (whereas iteratedlog makes sense to be its own function even though it's negative height tetrate).
             for (let i = 0; i < -height; ++i) {
                 prevpayload = payload;
@@ -4674,8 +4638,7 @@ export default class Decimal {
                     return new Decimal(Decimal.dNaN);
                 }
             }
-        }
-        else {
+        } else {
             while (value.gt(this)) {
                 result--;
                 value = Decimal.slog(value, base, linear);
@@ -4702,7 +4665,7 @@ export default class Decimal {
      *
      * Only works with the linear approximation of tetration, as starting with analytic and then switching to linear would result in inconsistent behavior for super-roots.
      */
-    public linear_penta_root(degree: number) : Decimal {
+    public linear_penta_root(degree: number): Decimal {
         //1st-degree super root just returns its input
         if (degree == 1) {
             return this;
@@ -4730,14 +4693,14 @@ export default class Decimal {
             return new Decimal(Decimal.dNaN);
         }
         /* If 'this' is below 1, then the result is going to be below 1, meaning the original number was a tetration tower where all entries are below 1...
-    ...and in the linear approximation, tetration with a height between 0 and 1 reduces to exponentiation of that height.
-    Therefore, penta_root and sroot will return the same value. */
+         ...and in the linear approximation, tetration with a height between 0 and 1 reduces to exponentiation of that height.
+         Therefore, penta_root and sroot will return the same value. */
         if (this.lt(1)) {
-            return this.linear_sroot(degree)
+            return this.linear_sroot(degree);
         }
 
         // Unlike with super-root, I'm not sure how to get a good upper bound here, so let's just call increasingInverse.
-        return (Decimal.increasingInverse(function(value : Decimal){return Decimal.pentate(value, degree, 1, true)}))(this);
+        return (Decimal.increasingInverse(function (value: Decimal) {return Decimal.pentate(value, degree, 1, true);}))(this);
     }
 
     // trig functions!
@@ -4913,3 +4876,18 @@ FC_NN = Decimal.fromComponents_noNormalize;
 ME = Decimal.fromMantissaExponent;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 ME_NN = Decimal.fromMantissaExponent_noNormalize;
+
+export const dZero = Decimal.dZero;
+export const dOne = Decimal.dOne;
+export const dNegOne = Decimal.dNegOne;
+export const dTwo = Decimal.dTwo;
+export const dTen = Decimal.dTen;
+export const dNaN = Decimal.dNaN;
+export const dInf = Decimal.dInf;
+export const dNegInf = Decimal.dNegInf;
+export const dNumberMax = Decimal.dNumberMax;
+export const dNumberMin = Decimal.dNumberMin;
+export const dLayerSafeMax = Decimal.dLayerSafeMax;
+export const dLayerSafeMin = Decimal.dLayerSafeMin;
+export const dLayerMax = Decimal.dLayerMax;
+export const dLayerMin = Decimal.dLayerMin;

@@ -1,13 +1,15 @@
 <script lang="ts" setup>
-import {computed, onMounted, onUnmounted, reactive, ref} from "vue";
-import {gameLoop} from "@/core/game-loop.ts"
-import {format} from "../visual/visual-settings.ts";
-import BuyButton from "@/components/PurchaseButton.vue";
-import type {ButtonProps} from "@/components/button-typing.ts";
-
-import "@/assets/main.scss"
-import Decimal from "@/break-eternity/break-eternity.ts";
+import AUpgradesTab from "@/components/Tabs/AUpgradesTab.vue";
+import CheatTab from "@/components/Tabs/CheatTab.vue";
+import ATab from "@/components/Tabs/ATab.vue";
 import EndgameWindow from "@/components/EndgameWindow.vue";
+import SettingsTab from "@/components/Tabs/SettingsTab.vue";
+import SideBar from "@/components/SideBar.vue";
+import { TabId } from "@/core/typing.ts";
+
+import "@/assets/main.scss";
+import { gameLoop } from "@/core/game-loop.ts";
+import { type Component, computed, type ComputedRef, type DefineComponent, onMounted } from "vue";
 
 onMounted(() => {
   let previous_time = Date.now();
@@ -22,47 +24,31 @@ onMounted(() => {
   }
 
   run();
-})
+});
 
 let player = window.player;
+let game = window.game;
 
+let activeTab: ComputedRef<any | null> = computed(() => {
+  switch (game.current_tab) {
+    case TabId.A: return ATab;
+    case TabId.A_UPGRADES: return AUpgradesTab;
+    case TabId.SETTINGS: return SettingsTab;
+    case TabId.CHEAT: return CheatTab;
+    default: return null;
+  }
+})
 
-let buttons: ButtonProps[] = [{
-  id: "buy-point",
-  text: () => "获得一个点数",
-  visible: () => true,
-  buyable: () => true,
-  buy() {
-    player.points = player.points.add(1);
-    player.points_bought = player.points_bought.add(1);
-  },
-  tooltipText:() =>
-    `已购买: ${format(player.points_bought)}`
-},
-  {
-    id: "buy-generator",
-    text: () => "购买一个生成器 (10 点数)",
-    visible: () => true,
-    buyable: () => player.points.gte(10),
-    buy() {
-      player.points = player.points.sub(10)
-      player.generators = player.generators.add(1);
-      player.generators_bought = player.generators_bought.add(1);
-    },
-    tooltipText: () => `当前生成器数量: ${format(player.generators)} <br> 已购买: ${format(player.generators_bought)}`
-  },]
 </script>
 
 <template>
-  <div class="main">
-    当前点数为 {{ format(player.points) }}.
-    <br>
-    <br>
-    <br>
-    <BuyButton v-for="b in buttons" v-bind="b"/>
+  <EndgameWindow v-if="player.endgame &&! player.endgame_continue"/>
+  <SideBar/>
+  <div class="content">
+    <div class="tab-container">
+      <Component :is="activeTab"/>
+    </div>
   </div>
-  胜利条件: 获得 1000 点数
-  <EndgameWindow v-if="player.endgame &&! player.endgame_continue"></EndgameWindow>
 </template>
 
 <style scoped>

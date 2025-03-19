@@ -1,7 +1,6 @@
-import {createApp, onMounted} from 'vue'
-import Decimal from "@/break-eternity/break-eternity.ts";
+import { createApp } from 'vue';
+import App from './components/App.vue';
 import { init } from "./init.ts";
-import App from './components/App.vue'
 
 init();
 
