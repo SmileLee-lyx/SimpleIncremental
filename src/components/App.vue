@@ -1,10 +1,12 @@
 <script lang="ts" setup>
+import { update_on_mounted } from "@/components/misc/component-timer.ts";
 import AUpgradesTab from "@/components/Tabs/AUpgradesTab.vue";
 import CheatTab from "@/components/Tabs/CheatTab.vue";
 import ATab from "@/components/Tabs/ATab.vue";
 import EndgameWindow from "@/components/EndgameWindow.vue";
 import SettingsTab from "@/components/Tabs/SettingsTab.vue";
 import SideBar from "@/components/SideBar.vue";
+import Header from "@/components/Header.vue";
 import { TabId } from "@/core/typing.ts";
 
 import "@/assets/main.scss";
@@ -26,6 +28,8 @@ onMounted(() => {
   run();
 });
 
+onMounted(update_on_mounted);
+
 let player = window.player;
 let game = window.game;
 
@@ -46,7 +50,10 @@ let activeTab: ComputedRef<any | null> = computed(() => {
   <SideBar/>
   <div class="content">
     <div class="tab-container">
-      <Component :is="activeTab"/>
+      <Header/>
+      <div class="tab-content">
+        <Component :is="activeTab"/>
+      </div>
     </div>
   </div>
 </template>

@@ -10,6 +10,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  z-index: 100;
 }
 
 .sidebar-header {
@@ -40,9 +42,16 @@
   background-color: #fff;
   text-align: center;
   transition: background-color 0.2s ease;
+  position: relative;
 }
 
-.sidebar-button:hover {
+.sidebar-button:hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
   background-color: rgba(0, 0, 0, 0.1);
 }
 

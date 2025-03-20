@@ -1,0 +1,83 @@
+.upgrade-button {
+  position: relative;
+  width: 150px;
+  height: 100px;
+  border: 3px solid red;
+  border-radius: 8px;
+  background-color: #ccc;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  text-align: center;
+  line-height: 16px;
+  white-space: normal;
+  vertical-align: middle;
+
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  &.fully-bought {
+    background-color: #4ce04c;
+    border-color: black;
+  }
+
+  &.buyable {
+    background-color: #a8f0a8;
+    border-color: green;
+  }
+}
+
+.upgrade-button.buyable:hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.purchase-button {
+  position: relative;
+  width: 200px;
+  height: 40px;
+  border: 3px solid red;
+  border-radius: 8px;
+  background-color: #ccc;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  text-align: center;
+  line-height: 16px;
+  white-space: normal;
+  vertical-align: middle;
+
+  &.disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  &.fully-bought {
+    background-color: #4ce04c;
+    border-color: black;
+  }
+
+  &.buyable {
+    background-color: #a8f0a8;
+    border-color: green;
+  }
+}
+
+.purchase-button.buyable:hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+}

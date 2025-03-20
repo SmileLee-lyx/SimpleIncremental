@@ -141,6 +141,7 @@ function mouseLeaveTab(tabId: TabId) {
       >
         <span class="sidebar-button-text">{{group.groupName}}</span>
       </button>
+      <transition name="fade">
       <div
         v-if="subMenuGroup === group.groupId"
         class="sidebar-sub-menu"
@@ -154,6 +155,7 @@ function mouseLeaveTab(tabId: TabId) {
           <span class="sidebar-sub-menu-button-text">{{tab.tabName}}</span>
         </button>
       </div>
+      </transition>
     </div>
   </div>
 </template>

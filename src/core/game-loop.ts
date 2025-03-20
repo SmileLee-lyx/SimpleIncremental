@@ -1,3 +1,4 @@
+import { runGameLoop as A_runGameLoop } from "@/core/main/A.ts";
 
 // durationMs is in millisecond
 export function gameLoop(durationMs: number) {
@@ -17,4 +18,9 @@ export function gameLoop(durationMs: number) {
 }
 
 function runGameLoop(duration: number) {
+    A_runGameLoop(duration);
+
+    if (window.player.A.points.amount.gte("1e30")) {
+        window.player.endgame = true;
+    }
 }

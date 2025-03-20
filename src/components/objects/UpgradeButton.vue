@@ -3,9 +3,7 @@ import { computed, type ComputedRef, ref, type Ref } from "vue";
 
 const props = defineProps<{
   visible?: () => boolean;
-  total_amount: number | (() => number);
-  already_bought: () => number;
-  buyable_amount: () => number;
+  buyable?: () => boolean;
   fully_bought?: () => boolean;
   buy: () => void;
   has_tooltip?: boolean | (() => boolean);
@@ -18,7 +16,7 @@ function _visible(): boolean {
 }
 
 function _buyable(): boolean {
-  return props.buyable_amount() !== 0;
+  return props.buyable === undefined || props.buyable();
 }
 
 function _fully_bought(): boolean {
@@ -30,18 +28,6 @@ function _has_tooltip(): boolean {
       typeof props.has_tooltip === "boolean" ? props.has_tooltip :
           props.has_tooltip());
 }
-
-function _total_amount(): number {
-  return typeof props.total_amount === "number" ? props.total_amount : props.total_amount();
-}
-
-let background: ComputedRef<any> = computed(() => {
-  let green_percentage = Math.floor(props.already_bought() / _total_amount() * 100);
-  let lightgreen_percentage = Math.floor((props.already_bought() + props.buyable_amount()) / _total_amount() * 100);
-  return {
-    background: `linear-gradient(to right, green ${green_percentage}%, lightgreen ${green_percentage}%, lightgreen ${lightgreen_percentage}%, white ${lightgreen_percentage}%)`
-  }
-})
 </script>
 
 <template>
@@ -51,9 +37,8 @@ let background: ComputedRef<any> = computed(() => {
         :class="[{
           'buyable': _buyable(),
           'fully-bought': _fully_bought(),
-        }, 'purchase-button']"
+        }, 'upgrade-button']"
         :disabled="!_buyable() || _fully_bought()"
-        :style="background"
         @click="buy()"
         @mouseenter="mouseHover = true"
         @mouseleave="mouseHover = false">
@@ -66,6 +51,6 @@ let background: ComputedRef<any> = computed(() => {
 
 </template>
 
-<style scoped lang="scss">
-  @use '@/assets/tooltip.scss';
+<style scoped>
+
 </style>

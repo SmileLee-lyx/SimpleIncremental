@@ -1,4 +1,4 @@
-import Decimal, { type DecimalSource, dZero } from "@/break-eternity/break-eternity.ts";
+import Decimal, { type DecimalSource, dOne, dZero, dTen } from "@/break-eternity/break-eternity.ts";
 import { type Game, type Player, TabId } from "@/core/typing.ts";
 import { cloneDeep } from "lodash";
 import { reactive } from "vue";
@@ -11,14 +11,15 @@ declare global {
 }
 
 export const defaultPlayer: Readonly<Player> = {
-    main: {
+    A: {
         points: {
-            amount: dZero,
+            amount: dTen,
             bought: dZero,
         },
         generators: [],
 
-        generator_layer_count: dZero,
+        auto_sign: false,
+        auto_sign_speed_bought: dZero,
     },
 
     endgame: false,

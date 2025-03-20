@@ -36,12 +36,12 @@ export interface ResourceAmount {
 }
 
 export interface Player {
-    main: {
+    A: {
         points: ResourceAmount;
-
         generators: ResourceAmount[];
 
-        generator_layer_count: Decimal;
+        auto_sign: boolean;
+        auto_sign_speed_bought: Decimal;
     };
 
     endgame: boolean;
