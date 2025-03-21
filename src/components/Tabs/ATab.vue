@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Decimal, { dTen, dZero } from "@/break-eternity/break-eternity.ts";
+import Decimal from "break_eternity.js";
 import PurchaseButton from "@/components/objects/PurchaseButton.vue";
 import UpgradeButton from "@/components/objects/UpgradeButton.vue";
 import { sign, generator_price as A_price } from "@/core/main/A.ts";
@@ -10,7 +10,7 @@ let player = window.player;
 
 function check_A() {
   while (player.A.generators.length < 8) {
-    player.A.generators.push({ amount: dZero, bought: dZero });
+    player.A.generators.push({ amount: Decimal.dZero, bought: Decimal.dZero });
   }
 }
 

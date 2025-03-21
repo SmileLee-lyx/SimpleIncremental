@@ -1,4 +1,4 @@
-import Decimal from "@/break-eternity/break-eternity.ts";
+import Decimal from "break_eternity.js";
 import { init_player, init_game } from "@/core/defines.ts";
 
 declare global {

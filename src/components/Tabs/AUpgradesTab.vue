@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import Decimal, { dOne, dTen, dZero } from "@/break-eternity/break-eternity.ts";
+import Decimal from "break_eternity.js";
 import { global_now } from "@/components/misc/component-timer.ts";
 import UpgradeButton from "@/components/objects/UpgradeButton.vue";
 import { auto_sign_speed, last_sign_duration, time_to_next_sign_ms } from "@/core/main/A.ts";
@@ -14,12 +14,12 @@ function auto_sign_buyable(): boolean {
 
 function auto_sign_buy() {
   player.A.auto_sign = true;
-  player.A.points = { amount: dTen, bought: dZero };
+  player.A.points = { amount: Decimal.dTen, bought: Decimal.dZero };
   player.A.generators = [];
 }
 
 function auto_sign_speed_price(): Decimal {
-  return dTen.pow(player.A.auto_sign_speed_bought.plus(1));
+  return Decimal.dTen.pow(player.A.auto_sign_speed_bought.plus(1));
 }
 
 function auto_sign_speed_buyable(): boolean {
@@ -28,7 +28,7 @@ function auto_sign_speed_buyable(): boolean {
 
 function auto_sign_speed_buy() {
   player.A.auto_sign_speed_bought = player.A.auto_sign_speed_bought.plus(1);
-  player.A.points = { amount: dTen, bought: dZero };
+  player.A.points = { amount: Decimal.dTen, bought: Decimal.dZero };
   player.A.generators = [];
 }
 

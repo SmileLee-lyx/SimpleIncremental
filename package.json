@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "break_eternity.js": "^2.1.1",
     "crypto-browserify": "^3.12.1",
     "lodash": "^4.17.21",
     "path": "^0.12.7",

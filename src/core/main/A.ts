@@ -1,5 +1,10 @@
-import Decimal, { dOne, dTen, dTwo, dZero } from "@/break-eternity/break-eternity.ts";
+import Decimal from "break_eternity.js";
 import { computed, type ComputedRef, ref, type Ref } from "vue";
+
+let dZero = Decimal.dZero;
+let dOne = Decimal.dOne;
+let dTwo = Decimal.dTwo;
+let dTen = Decimal.dTen;
 
 export function sign(count: Decimal = dOne): void {
     let player = window.player;

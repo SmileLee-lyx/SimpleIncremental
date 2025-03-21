@@ -1,4 +1,4 @@
-import Decimal, { type DecimalSource } from "@/break-eternity/break-eternity.ts";
+import Decimal, { type DecimalSource } from "break_eternity.js";
 
 declare global {
     interface Window {
