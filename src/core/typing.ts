@@ -23,8 +23,14 @@ export interface TabConfig {
     visible?: () => boolean;
 }
 
+export enum AlertId {
+    UNLOCK_A_UPGRADE,
+}
+
 export interface Game {
     current_tab: TabId;
+    group_tabs: {[_ in TabGroupId]?: TabId};
+    ignored_alerts: AlertId[];
 
     GLOBAL_SPEED: number;
     show_cheat: boolean;
@@ -46,13 +52,4 @@ export interface Player {
 
     endgame: boolean;
     endgame_continue: boolean;
-}
-
-export interface ButtonProps {
-    id: string,
-    visible?: () => boolean,
-    buyable: () => boolean,
-    buy: () => void,
-    fullyBought?: () => boolean,
-    extraClasses?: string[],
 }

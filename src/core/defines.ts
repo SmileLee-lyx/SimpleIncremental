@@ -28,6 +28,7 @@ export const defaultPlayer: Readonly<Player> = {
 
 export const defaultGame: Game = {
     current_tab: TabId.A,
+    group_tabs: {},
     GLOBAL_SPEED: 1,
     show_cheat: false,
 };

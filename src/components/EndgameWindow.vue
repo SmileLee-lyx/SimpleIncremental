@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { defaultPlayer } from "@/core/defines.ts";
-import { merge } from "lodash";
+import type { Player } from "@/core/typing.ts";
+import { assign, cloneDeep, merge } from "lodash";
 
 import "@/assets/main.scss";
 
@@ -9,7 +10,8 @@ function continue_game() {
 }
 
 function restart_game() {
-  merge(window.player, defaultPlayer);
+  let defaultCopy = cloneDeep(defaultPlayer);
+  assign(window.player, defaultCopy);
 }
 </script>
 

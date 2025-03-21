@@ -16,10 +16,14 @@ let input = ref('');
 
 <template>
   <div class="message-window">
-    <slot></slot>
-    <input v-model="input" :type="type" :placeholder="placeholder"></input>
-    <button class="message-button" @click="emit('done', input)">确认</button>
-    <button class="message-button" @click="emit('close')">取消</button>
+    <div><slot/></div>
+    <input v-model="input" :type="type" :placeholder="placeholder" v-bind="$attrs"
+      style="flex-grow: 1"
+    ></input>
+    <div style="text-align: center;">
+      <button class="message-button" @click="emit('done', input)">确认</button>
+      <button class="message-button" @click="emit('close')">取消</button>
+    </div>
   </div>
 </template>
 

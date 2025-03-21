@@ -76,11 +76,37 @@ let tabGroups: Record<TabGroupId, TabGroupConfig> = {
 let config: ComputedRef<SideBarConfig> = computed(() => makeConfig(tabs, tabGroups));
 
 function switchGroup(group: TabGroupId) {
-
+  let current_tab = game.current_tab;
+  let current_group = tabs[current_tab].groupId;
+  if (current_group !== group) {
+    let target_tab = game.group_tabs[group];
+    if (target_tab !== undefined) {
+      game.current_tab = target_tab;
+      return;
+    } else {
+      let group_cfg = config.value.find((c) => c.groupId === group);
+      if (group_cfg === undefined) return;
+      if (group_cfg.tabs.length === 0) return;
+      game.current_tab = group_cfg.tabs[0].tabId;
+      return;
+    }
+  } else {
+    let group_cfg = config.value.find((c) => c.groupId === group);
+    if (group_cfg === undefined) return;
+    if (group_cfg.tabs.length === 0) return;
+    let idx = group_cfg.tabs.findIndex((c) => c.tabId === current_tab);
+    if (idx === -1) {
+      game.current_tab = group_cfg.tabs[0].tabId;
+    } else {
+      game.current_tab = group_cfg.tabs[(idx + 1) % group_cfg.tabs.length].tabId;
+    }
+    game.group_tabs[group] = game.current_tab;
+  }
 }
 
 function switchTab(tab: TabId) {
   game.current_tab = tab;
+  game.group_tabs[tabs[tab].groupId] = tab;
 }
 
 let hoveredGroup: Ref<TabGroupId | null> = ref(null);
@@ -140,6 +166,7 @@ function mouseLeaveTab(tabId: TabId) {
         @mouseleave="mouseLeaveGroup(group.groupId)"
       >
         <span class="sidebar-button-text">{{group.groupName}}</span>
+        <span v-if="tabs[game.current_tab].groupId == group.groupId" class="chosen-button-left"></span>
       </button>
       <transition name="fade">
       <div
@@ -153,6 +180,7 @@ function mouseLeaveTab(tabId: TabId) {
           class="sidebar-sub-menu-button"
         >
           <span class="sidebar-sub-menu-button-text">{{tab.tabName}}</span>
+          <span v-if="game.current_tab == tab.tabId" class="chosen-button-top"></span>
         </button>
       </div>
       </transition>

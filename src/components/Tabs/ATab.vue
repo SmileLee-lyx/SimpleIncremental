@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import MessageBox from "@/components/objects/MessageBox.vue";
 import Decimal from "break_eternity.js";
 import PurchaseButton from "@/components/objects/PurchaseButton.vue";
 import UpgradeButton from "@/components/objects/UpgradeButton.vue";
 import { sign, generator_price as A_price } from "@/core/main/A.ts";
 import type { ResourceAmount } from "@/core/typing.ts";
 import { format } from "@/visual/format.ts";
+import { ref, type Ref } from "vue";
 
 let player = window.player;
 
@@ -44,12 +46,21 @@ function A_buy(layer: number): () => void {
   }
 }
 
+let sign_nothing_msg_show: Ref<boolean> = ref(false);
+
+function sign_on_click() {
+  if (!player.A.generators.some((x) => x.bought.gt(0))) {
+    sign_nothing_msg_show.value = true;
+  }
+  sign();
+}
+
 </script>
 
 <template>
   <div class="text-box">
     <UpgradeButton
-      :buy="sign">
+      :buy="sign_on_click">
       <template #text> 签到 (%sign) </template>
     </UpgradeButton>
   </div>
@@ -62,6 +73,9 @@ function A_buy(layer: number): () => void {
     </PurchaseButton>
     你有 <span class="A-text">{{format(generator(i).amount)}}</span> 个 <span class="A-text">A{{i}}</span>.
   </div>
+  <MessageBox v-if="sign_nothing_msg_show" @done="sign_nothing_msg_show = false">
+    请先购买 <span class="A-text">A1</span> 再签到.
+  </MessageBox>
 </template>
 
 <style scoped>
