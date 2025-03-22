@@ -68,10 +68,10 @@ function sign_on_click() {
     <PurchaseButton
         :total_amount="10" :already_bought="() => 0" :buyable_amount="A_buyable(i)" :buy="A_buy(i)"
         :has_tooltip="true">
-      <template #text> 购买 A{{i}} (%buy A{{i}}) </template>
+      <template #text> 购买 A<sub>{{i}}</sub> (%buy A{{i}}) </template>
       <template #tooltip> 已购买: {{format(generator(i).bought)}} </template>
     </PurchaseButton>
-    你有 <span class="A-text">{{format(generator(i).amount)}}</span> 个 <span class="A-text">A{{i}}</span>.
+    你有 <span class="A-text">{{format(generator(i).amount)}}</span> 个 <span class="A-text">A<sub>{{i}}</sub></span>.
   </div>
   <MessageBox v-if="sign_nothing_msg_show" @done="sign_nothing_msg_show = false">
     请先购买 <span class="A-text">A1</span> 再签到.

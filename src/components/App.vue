@@ -7,6 +7,7 @@ import EndgameWindow from "@/components/EndgameWindow.vue";
 import SettingsTab from "@/components/Tabs/SettingsTab.vue";
 import SideBar from "@/components/SideBar.vue";
 import Header from "@/components/Header.vue";
+import TabUnlocker from "@/components/TabUnlocker.vue";
 import { TabId } from "@/core/typing.ts";
 
 import "@/assets/main.scss";
@@ -46,7 +47,8 @@ let activeTab: ComputedRef<any | null> = computed(() => {
 </script>
 
 <template>
-  <EndgameWindow v-if="player.endgame &&! player.endgame_continue"/>
+  <EndgameWindow/>
+  <TabUnlocker></TabUnlocker>
   <SideBar/>
   <div class="content">
     <div class="tab-container">

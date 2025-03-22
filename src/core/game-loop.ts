@@ -21,6 +21,6 @@ function runGameLoop(duration: number) {
     A_runGameLoop(duration);
 
     if (window.player.A.points.amount.gte("1e30")) {
-        window.player.endgame = true;
+        window.player.progress.endgame = true;
     }
 }

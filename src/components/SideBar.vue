@@ -30,7 +30,7 @@ function makeConfig(tabConfig: Record<TabId, TabConfig>, tabGroupConfig: Record<
   }
   for (let tabId of Object.values(TabId).filter((k) => typeof k === "number")) {
     let element = tabConfig[tabId];
-    if (element.visible === undefined || element.visible()) {
+    if (player.progress.unlocked_tabs.includes(tabId)) {
       let groupId = element.groupId;
       resultDict[groupId].tabs.push({
         tabId: tabId,
@@ -57,7 +57,6 @@ let tabs: Record<TabId, TabConfig> = {
   [TabId.CHEAT]: {
     sideBarName: "作弊",
     groupId: TabGroupId.CHEAT,
-    visible: () => game.show_cheat,
   }
 }
 
@@ -81,13 +80,13 @@ function switchGroup(group: TabGroupId) {
   if (current_group !== group) {
     let target_tab = game.group_tabs[group];
     if (target_tab !== undefined) {
-      game.current_tab = target_tab;
+      switchTab(target_tab);
       return;
     } else {
       let group_cfg = config.value.find((c) => c.groupId === group);
       if (group_cfg === undefined) return;
       if (group_cfg.tabs.length === 0) return;
-      game.current_tab = group_cfg.tabs[0].tabId;
+      switchTab(group_cfg.tabs[0].tabId);
       return;
     }
   } else {
@@ -96,17 +95,17 @@ function switchGroup(group: TabGroupId) {
     if (group_cfg.tabs.length === 0) return;
     let idx = group_cfg.tabs.findIndex((c) => c.tabId === current_tab);
     if (idx === -1) {
-      game.current_tab = group_cfg.tabs[0].tabId;
+      switchTab(group_cfg.tabs[0].tabId);
     } else {
-      game.current_tab = group_cfg.tabs[(idx + 1) % group_cfg.tabs.length].tabId;
+      switchTab(group_cfg.tabs[(idx + 1) % group_cfg.tabs.length].tabId);
     }
-    game.group_tabs[group] = game.current_tab;
   }
 }
 
 function switchTab(tab: TabId) {
   game.current_tab = tab;
   game.group_tabs[tabs[tab].groupId] = tab;
+  game.alert_tabs.delete(tab);
 }
 
 let hoveredGroup: Ref<TabGroupId | null> = ref(null);
@@ -168,20 +167,24 @@ function mouseLeaveTab(tabId: TabId) {
         <span class="sidebar-button-text">{{group.groupName}}</span>
         <span v-if="tabs[game.current_tab].groupId == group.groupId" class="chosen-button-left"></span>
       </button>
+      <div class="sidebar-alert" v-if="group.tabs.some((tab) => game.alert_tabs.has(tab.tabId))"/>
       <transition name="fade">
       <div
         v-if="subMenuGroup === group.groupId"
         class="sidebar-sub-menu"
       >
-        <button v-for="tab of group.tabs"
-          @click="switchTab(tab.tabId)"
-          @mouseenter="mouseEnterTab(tab.tabId)"
-          @mouseleave="mouseLeaveTab(tab.tabId)"
-          class="sidebar-sub-menu-button"
-        >
-          <span class="sidebar-sub-menu-button-text">{{tab.tabName}}</span>
-          <span v-if="game.current_tab == tab.tabId" class="chosen-button-top"></span>
-        </button>
+        <div v-for="tab of group.tabs" class="sidebar-sub-menu-element">
+          <button
+            @click="switchTab(tab.tabId)"
+            @mouseenter="mouseEnterTab(tab.tabId)"
+            @mouseleave="mouseLeaveTab(tab.tabId)"
+            class="sidebar-sub-menu-button"
+          >
+            <span class="sidebar-sub-menu-button-text">{{tab.tabName}}</span>
+            <span v-if="game.current_tab == tab.tabId" class="chosen-button-top"></span>
+          </button>
+          <div class="sidebar-alert" v-if="game.alert_tabs.has(tab.tabId)"/>
+        </div>
       </div>
       </transition>
     </div>

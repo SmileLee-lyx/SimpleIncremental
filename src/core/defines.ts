@@ -1,5 +1,5 @@
-import Decimal, { type DecimalSource } from "break_eternity.js";
 import { type Game, type Player, TabId } from "@/core/typing.ts";
+import Decimal from "break_eternity.js";
 import { cloneDeep } from "lodash";
 import { reactive } from "vue";
 
@@ -21,14 +21,21 @@ export const defaultPlayer: Readonly<Player> = {
         auto_sign: false,
         auto_sign_speed_bought: Decimal.dZero,
     },
-
-    endgame: false,
-    endgame_continue: false,
+    settings: {
+        force_show_sign: false,
+    },
+    progress: {
+        unlocked_tabs: [TabId.A, TabId.SETTINGS],
+        ignored_alerts: [],
+        endgame: false,
+        endgame_continue: false,
+    }
 };
 
 export const defaultGame: Game = {
     current_tab: TabId.A,
     group_tabs: {},
+    alert_tabs: new Set(),
     GLOBAL_SPEED: 1,
     show_cheat: false,
 };

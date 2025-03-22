@@ -5,18 +5,20 @@ import { assign, cloneDeep, merge } from "lodash";
 
 import "@/assets/main.scss";
 
+let player = window.player
+
 function continue_game() {
-  window.player.endgame_continue = true;
+  player.progress.endgame_continue = true;
 }
 
 function restart_game() {
   let defaultCopy = cloneDeep(defaultPlayer);
-  assign(window.player, defaultCopy);
+  assign(player, defaultCopy);
 }
 </script>
 
 <template>
-  <div class="message-window">
+  <div v-if="player.progress.endgame &&! player.progress.endgame_continue" class="message-window">
     <h3>恭喜你，游戏胜利！</h3>
     <button class="message-button" @click="continue_game()">继续玩</button>
     <button class="message-button" @click="restart_game()">重新开始</button>

@@ -20,7 +20,6 @@ export interface TabGroupConfig {
 export interface TabConfig {
     sideBarName: string;
     groupId: TabGroupId;
-    visible?: () => boolean;
 }
 
 export enum AlertId {
@@ -30,7 +29,7 @@ export enum AlertId {
 export interface Game {
     current_tab: TabId;
     group_tabs: {[_ in TabGroupId]?: TabId};
-    ignored_alerts: AlertId[];
+    alert_tabs: Set<TabId>;
 
     GLOBAL_SPEED: number;
     show_cheat: boolean;
@@ -49,7 +48,13 @@ export interface Player {
         auto_sign: boolean;
         auto_sign_speed_bought: Decimal;
     };
-
-    endgame: boolean;
-    endgame_continue: boolean;
+    settings: {
+        force_show_sign: boolean;
+    }
+    progress: {
+        unlocked_tabs: TabId[];
+        ignored_alerts: AlertId[];
+        endgame: boolean;
+        endgame_continue: boolean;
+    }
 }
