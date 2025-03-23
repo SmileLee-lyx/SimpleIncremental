@@ -1,9 +1,11 @@
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
 }
+
 .fade-enter-to, .fade-leave-from {
   opacity: 1;
 }
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.4s ease-in-out;
 }
@@ -12,10 +14,12 @@
   transform: rotate(-90deg);
   opacity: 0;
 }
+
 .rotate-enter-to {
   transform: rotate(0deg);
   opacity: 1;
 }
+
 .rotate-enter-active, .rotate-leave-active {
   transition: transform 0.4s ease, opacity 0.4s ease;
 }
@@ -24,6 +28,7 @@
   transform: rotate(0deg);
   opacity: 1;
 }
+
 .rotate-leave-to {
   transform: rotate(90deg);
   opacity: 0;
@@ -33,17 +38,21 @@
   opacity: 0;
   transform: translateX(-20px);
 }
+
 .slide-left-enter-to {
   opacity: 1;
   transform: translateX(0);
 }
+
 .slide-left-enter-active, .slide-left-leave-active {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
+
 .slide-left-leave-from {
   opacity: 1;
   transform: translateX(0);
 }
+
 .slide-left-leave-to {
   opacity: 0;
   transform: translateX(-20px);
@@ -53,17 +62,21 @@
   opacity: 0;
   transform: translateX(20px);
 }
+
 .slide-right-enter-to {
   opacity: 1;
   transform: translateX(0);
 }
+
 .slide-right-enter-active, .slide-right-leave-active {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
+
 .slide-right-leave-from {
   opacity: 1;
   transform: translateX(0);
 }
+
 .slide-right-leave-to {
   opacity: 0;
   transform: translateX(20px);
@@ -73,17 +86,21 @@
   opacity: 0;
   transform: translateY(-20px);
 }
+
 .slide-top-enter-to {
   opacity: 1;
   transform: translateY(0);
 }
+
 .slide-top-enter-active, .slide-top-leave-active {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
+
 .slide-top-leave-from {
   opacity: 1;
   transform: translateY(0);
 }
+
 .slide-top-leave-to {
   opacity: 0;
   transform: translateY(-20px);
@@ -93,17 +110,21 @@
   opacity: 0;
   transform: translateY(20px);
 }
+
 .slide-bottom-enter-to {
   opacity: 1;
   transform: translateY(0);
 }
+
 .slide-bottom-enter-active, .slide-bottom-leave-active {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
+
 .slide-bottom-leave-from {
   opacity: 1;
   transform: translateY(0);
 }
+
 .slide-bottom-leave-to {
   opacity: 0;
   transform: translateY(20px);
@@ -113,17 +134,21 @@
   transform: scale(0.8);
   opacity: 0;
 }
+
 .scale-enter-to {
   transform: scale(1);
   opacity: 1;
 }
+
 .scale-enter-active, .scale-leave-active {
   transition: transform 0.4s ease, opacity 0.4s ease;
 }
+
 .scale-leave-from {
   transform: scale(1);
   opacity: 1;
 }
+
 .scale-leave-to {
   transform: scale(0.8);
   opacity: 0;
@@ -133,17 +158,21 @@
   transform: rotateY(90deg);
   opacity: 0;
 }
+
 .flip-enter-to {
   transform: rotateY(0deg);
   opacity: 1;
 }
+
 .flip-enter-active, .flip-leave-active {
   transition: transform 0.4s ease, opacity 0.4s ease;
 }
+
 .flip-leave-from {
   transform: rotateY(0deg);
   opacity: 1;
 }
+
 .flip-leave-to {
   transform: rotateY(90deg);
   opacity: 0;

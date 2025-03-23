@@ -1,5 +1,5 @@
+import App from '@/components/App.vue';
 import { createApp } from 'vue';
-import App from './components/App.vue';
 import { init } from "./init.ts";
 
 init();

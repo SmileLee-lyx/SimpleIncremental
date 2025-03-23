@@ -1,8 +1,10 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import InputBox from "@/components/objects/InputBox.vue";
+import UpgradeButton from "@/components/objects/UpgradeButton.vue";
 import { ref } from "vue";
 
 let game = window.game;
+let player = window.player;
 
 let show_speed = ref(false);
 
@@ -19,23 +21,34 @@ let console = window.console;
 </script>
 
 <template>
-  <div class="main">
+  <div class="text-box">
     作弊页面
 
     <br>
 
-    <button @click="show_speed = true">修改游戏速度</button>
+    <button class="select-button" @click="show_speed = true">修改游戏速度</button>
+    <UpgradeButton
+        :buy="() => player.A.As = player.A.As.plus(1)">
+      <template #text>白嫖一个 <span class="A-text">A<sub>*</sub></span></template>
+    </UpgradeButton>
+    <UpgradeButton
+        :buy="() => player.A.Atu = player.A.Atu.plus(1)">
+      <template #text>白嫖一个 <span class="A-text">A<sub>tu</sub></span></template>
+    </UpgradeButton>
 
     <InputBox
         v-if="show_speed"
-        type="number"
         placeholder="1"
-        @done="(speed) => { upgradeSpeed(speed); show_speed = false }"
+        type="number"
         @close="show_speed = false"
-    >请输入游戏速度 (不会被校验, 后果自负).</InputBox>
+        @done="(speed) => { upgradeSpeed(speed); show_speed = false }"
+    >请输入游戏速度 (不会被校验, 后果自负).
+    </InputBox>
   </div>
 </template>
 
 <style scoped>
-
+.text-box {
+  text-align: center;
+}
 </style>

@@ -1,4 +1,5 @@
 import { runGameLoop as A_runGameLoop } from "@/core/main/A.ts";
+import Decimal from "break_eternity.js";
 
 // durationMs is in millisecond
 export function gameLoop(durationMs: number) {
@@ -20,7 +21,10 @@ export function gameLoop(durationMs: number) {
 function runGameLoop(duration: number) {
     A_runGameLoop(duration);
 
-    if (window.player.A.points.amount.gte("1e30")) {
-        window.player.progress.endgame = true;
+    if (window.player.A.Ap.gte(Decimal.dNumberMax)) {
+        if (!window.player.progress.endgame) {
+            window.player.progress.endgame = true;
+            window.player.progress.end_time = performance.now();
+        }
     }
 }

@@ -1,5 +1,7 @@
-<script setup lang="ts">
+<script lang="ts" setup>
+import { run_on_frame } from "@/components/misc/run-on-frame.ts";
 import { TabId } from "@/core/typing.ts";
+import { watchEffect } from "vue";
 
 function unlock(tabId: TabId): boolean {
   if (!window.player.progress.unlocked_tabs.includes(tabId)) {
@@ -9,21 +11,20 @@ function unlock(tabId: TabId): boolean {
   return false;
 }
 
-function checkTabUnlock() {
-  function run() {
-    if (window.player.A.points.amount.gte("1e5")) {
-      if (unlock(TabId.A_UPGRADES)) {
-        window.game.alert_tabs.add(TabId.A_UPGRADES);
-      }
+run_on_frame(() => {
+  if (window.player.A.Ap.gte("1e2")) {
+    if (unlock(TabId.A_UPGRADES)) {
+      window.game.alert_tabs.add(TabId.A_UPGRADES);
     }
-
-    requestAnimationFrame(run);
   }
+});
 
-  run();
-}
+watchEffect(() => {
+  if (window.game.show_cheat) {
+    window.player.progress.unlocked_tabs.push(TabId.CHEAT);
+  }
+});
 
-checkTabUnlock();
 </script>
 
 <template>

@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { update_on_mounted } from "@/components/misc/component-timer.ts";
+import { init_timer } from "@/components/misc/component-timer.ts";
+import { run_on_frame } from "@/components/misc/run-on-frame.ts";
+import { init_keyboard_press } from "@/components/misc/global-keyboard-press.ts";
 import AUpgradesTab from "@/components/Tabs/AUpgradesTab.vue";
 import CheatTab from "@/components/Tabs/CheatTab.vue";
 import ATab from "@/components/Tabs/ATab.vue";
@@ -14,22 +16,16 @@ import "@/assets/main.scss";
 import { gameLoop } from "@/core/game-loop.ts";
 import { type Component, computed, type ComputedRef, type DefineComponent, onMounted } from "vue";
 
-onMounted(() => {
-  let previous_time = Date.now();
-
-  function run() {
+let previous_time = Date.now();
+run_on_frame(() => {
     let current_time = Date.now();
     let duration = current_time - previous_time;
     previous_time = current_time;
     gameLoop(duration);
-
-    requestAnimationFrame(run);
-  }
-
-  run();
 });
 
-onMounted(update_on_mounted);
+init_timer();
+init_keyboard_press();
 
 let player = window.player;
 let game = window.game;

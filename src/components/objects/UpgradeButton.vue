@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, type ComputedRef, ref, type Ref } from "vue";
+import { ref, type Ref } from "vue";
 
 const props = defineProps<{
   visible?: () => boolean;
@@ -35,10 +35,11 @@ function _has_tooltip(): boolean {
     <button
         v-show="_visible()"
         :class="[{
-          'buyable': _buyable(),
+          'buyable': _buyable() && !_fully_bought(),
           'fully-bought': _fully_bought(),
         }, 'upgrade-button']"
         :disabled="!_buyable() || _fully_bought()"
+        v-bind="$attrs"
         @click="buy()"
         @mouseenter="mouseHover = true"
         @mouseleave="mouseHover = false">

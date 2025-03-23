@@ -39,9 +39,9 @@ let background: ComputedRef<any> = computed(() => {
   let green_percentage = Math.floor(props.already_bought() / _total_amount() * 100);
   let lightgreen_percentage = Math.floor((props.already_bought() + props.buyable_amount()) / _total_amount() * 100);
   return {
-    background: `linear-gradient(to right, green ${green_percentage}%, lightgreen ${green_percentage}%, lightgreen ${lightgreen_percentage}%, white ${lightgreen_percentage}%)`
-  }
-})
+    background: `linear-gradient(to right, #4c4 ${ green_percentage }%, lightgreen ${ green_percentage }%, lightgreen ${ lightgreen_percentage }%, white ${ lightgreen_percentage }%)`,
+  };
+});
 </script>
 
 <template>
@@ -54,6 +54,7 @@ let background: ComputedRef<any> = computed(() => {
         }, 'purchase-button']"
         :disabled="!_buyable() || _fully_bought()"
         :style="background"
+        v-bind="$attrs"
         @click="buy()"
         @mouseenter="mouseHover = true"
         @mouseleave="mouseHover = false">
@@ -66,6 +67,6 @@ let background: ComputedRef<any> = computed(() => {
 
 </template>
 
-<style scoped lang="scss">
-  @use '@/assets/tooltip.scss';
+<style lang="scss" scoped>
+@use '@/assets/tooltip.scss';
 </style>

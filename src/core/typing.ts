@@ -1,3 +1,4 @@
+import type { SignSetting } from "@/core/settings.ts";
 import Decimal from "break_eternity.js";
 
 export enum TabGroupId {
@@ -23,38 +24,50 @@ export interface TabConfig {
 }
 
 export enum AlertId {
-    UNLOCK_A_UPGRADE,
+    HIDE_SIGN,
+    SHIFT,
+}
+
+export enum BuyMode {
+    BUY_ONE,
+    BUY_TEN,
+    BUY_MAX,
 }
 
 export interface Game {
     current_tab: TabId;
-    group_tabs: {[_ in TabGroupId]?: TabId};
+    group_tabs: { [_ in TabGroupId]?: TabId };
     alert_tabs: Set<TabId>;
 
     GLOBAL_SPEED: number;
     show_cheat: boolean;
-}
 
-export interface ResourceAmount {
-    amount: Decimal;
-    bought: Decimal;
+    A: {
+        buy_mode: BuyMode;
+    };
 }
 
 export interface Player {
     A: {
-        points: ResourceAmount;
-        generators: ResourceAmount[];
+        Ap: Decimal;
+        Ai: { amount: Decimal, bought: Decimal }[];
+        At_unlocked: boolean;
+        At: Decimal;
+        As: Decimal;
+        Atu: Decimal;
 
-        auto_sign: boolean;
-        auto_sign_speed_bought: Decimal;
+        Ai_automation: { unlocked: boolean, enabled: boolean, buy_mode: BuyMode }[];
+        At_automation: { unlocked: boolean, enabled: boolean, buy_mode: BuyMode };
     };
     settings: {
-        force_show_sign: boolean;
-    }
+        sign_setting: SignSetting;
+    };
     progress: {
         unlocked_tabs: TabId[];
         ignored_alerts: AlertId[];
+        start_time: number;
+        end_time: number;
         endgame: boolean;
         endgame_continue: boolean;
-    }
+    };
 }

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 
 let emit = defineEmits<{
   done: [];
@@ -8,7 +8,9 @@ let emit = defineEmits<{
 
 <template>
   <div class="message-window">
-    <div><slot/></div>
+    <div>
+      <slot/>
+    </div>
     <button class="message-button" @click="emit('done')">确认</button>
   </div>
 </template>

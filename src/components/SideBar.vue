@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { type TabConfig, type TabGroupConfig, TabGroupId, TabId } from "@/core/typing.ts";
-import { keys } from "lodash";
 import { computed, type ComputedRef, ref, type Ref } from "vue";
 
 let game = window.game;
@@ -17,7 +16,7 @@ type SideBarConfig = {
 
 function makeConfig(tabConfig: Record<TabId, TabConfig>, tabGroupConfig: Record<TabGroupId, TabGroupConfig>): SideBarConfig {
   let resultDict: any = {};
-  let result: SideBarConfig = []
+  let result: SideBarConfig = [];
   for (let tabGroupId of Object.values(TabGroupId).filter((k) => typeof k === "number")) {
     let element = tabGroupConfig[tabGroupId];
     let groupResult = {
@@ -35,7 +34,7 @@ function makeConfig(tabConfig: Record<TabId, TabConfig>, tabGroupConfig: Record<
       resultDict[groupId].tabs.push({
         tabId: tabId,
         tabName: element.sideBarName,
-      })
+      });
     }
   }
   return result.filter((group) => group.tabs.length > 0);
@@ -57,8 +56,8 @@ let tabs: Record<TabId, TabConfig> = {
   [TabId.CHEAT]: {
     sideBarName: "作弊",
     groupId: TabGroupId.CHEAT,
-  }
-}
+  },
+};
 
 let tabGroups: Record<TabGroupId, TabGroupConfig> = {
   [TabGroupId.A]: {
@@ -69,8 +68,8 @@ let tabGroups: Record<TabGroupId, TabGroupConfig> = {
   },
   [TabGroupId.CHEAT]: {
     sideBarName: "作弊",
-  }
-}
+  },
+};
 
 let config: ComputedRef<SideBarConfig> = computed(() => makeConfig(tabs, tabGroups));
 
@@ -148,44 +147,44 @@ function mouseLeaveTab(tabId: TabId) {
 <template>
   <div class="sidebar">
     <div
-      class="sidebar-header"
+        class="sidebar-header"
     >
       <span class="sidebar-header-text">
         菜单
       </span>
     </div>
     <div
-      v-for="group of config"
-      class="sidebar-element"
+        v-for="group of config"
+        class="sidebar-element"
     >
       <button
-        class="sidebar-button"
-        @click="switchGroup(group.groupId)"
-        @mouseenter="mouseEnterGroup(group.groupId)"
-        @mouseleave="mouseLeaveGroup(group.groupId)"
+          class="sidebar-button"
+          @click="switchGroup(group.groupId)"
+          @mouseenter="mouseEnterGroup(group.groupId)"
+          @mouseleave="mouseLeaveGroup(group.groupId)"
       >
-        <span class="sidebar-button-text">{{group.groupName}}</span>
+        <span class="sidebar-button-text">{{ group.groupName }}</span>
         <span v-if="tabs[game.current_tab].groupId == group.groupId" class="chosen-button-left"></span>
       </button>
-      <div class="sidebar-alert" v-if="group.tabs.some((tab) => game.alert_tabs.has(tab.tabId))"/>
+      <div v-if="group.tabs.some((tab) => game.alert_tabs.has(tab.tabId))" class="sidebar-alert"/>
       <transition name="fade">
-      <div
-        v-if="subMenuGroup === group.groupId"
-        class="sidebar-sub-menu"
-      >
-        <div v-for="tab of group.tabs" class="sidebar-sub-menu-element">
-          <button
-            @click="switchTab(tab.tabId)"
-            @mouseenter="mouseEnterTab(tab.tabId)"
-            @mouseleave="mouseLeaveTab(tab.tabId)"
-            class="sidebar-sub-menu-button"
-          >
-            <span class="sidebar-sub-menu-button-text">{{tab.tabName}}</span>
-            <span v-if="game.current_tab == tab.tabId" class="chosen-button-top"></span>
-          </button>
-          <div class="sidebar-alert" v-if="game.alert_tabs.has(tab.tabId)"/>
+        <div
+            v-if="subMenuGroup === group.groupId"
+            class="sidebar-sub-menu"
+        >
+          <div v-for="tab of group.tabs" class="sidebar-sub-menu-element">
+            <button
+                class="sidebar-sub-menu-button"
+                @click="switchTab(tab.tabId)"
+                @mouseenter="mouseEnterTab(tab.tabId)"
+                @mouseleave="mouseLeaveTab(tab.tabId)"
+            >
+              <span class="sidebar-sub-menu-button-text">{{ tab.tabName }}</span>
+              <span v-if="game.current_tab == tab.tabId" class="chosen-button-top"></span>
+            </button>
+            <div v-if="game.alert_tabs.has(tab.tabId)" class="sidebar-alert"/>
+          </div>
         </div>
-      </div>
       </transition>
     </div>
   </div>

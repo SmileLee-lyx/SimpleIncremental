@@ -19,10 +19,12 @@
 
 .tab-container {
   position: relative;
-  width: 100%;
-  padding-top: 160px;
+  width: calc(100% - 10px);
+  padding: 10px;
+  padding-top: 170px;
+  display: flex;
 }
 
 .tab-content {
-  padding: 10px
+  flex-grow: 1;
 }
