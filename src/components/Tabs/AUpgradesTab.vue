@@ -3,7 +3,7 @@
 import ToggleButton from "@/components/objects/ToggleButton.vue";
 import UpgradeButton from "@/components/objects/UpgradeButton.vue";
 import { defaultPlayer } from "@/core/defines.ts";
-import { format } from "@/visual/format.ts";
+import { format } from "@/util/format.ts";
 import { cloneDeep } from "lodash";
 
 let player = window.player;

@@ -1,27 +1,40 @@
-import { runGameLoop as A_runGameLoop } from "@/core/main/A.ts";
+import A from "@/core/instances/A/A.js";
+import Ap from "@/core/instances/A/Ap.js";
+import { AutoSaveSetting } from "@/core/settings.js";
+import { auto_save } from "@/save/save-load.js";
 import Decimal from "break_eternity.js";
 
-// durationMs is in millisecond
-export function gameLoop(durationMs: number) {
-    let true_duration = durationMs * window.game.GLOBAL_SPEED;
-    if (true_duration < 0) {
-        return;
+export function check_auto_save() {
+    let required_time: number;
+    switch (window.player.settings.auto_save_setting) {
+        case AutoSaveSetting.NEVER:
+            return;
+        case AutoSaveSetting.EVERY_5_MIN:
+            required_time = 300000;
+            break;
+        case AutoSaveSetting.EVERY_30_SEC:
+            required_time = 30000;
+            break;
     }
-    let ticks;
-    if (true_duration < 5) {
-        ticks = Math.ceil(true_duration);
-    } else {
-        ticks = 5;
-    }
-    for (let i = 0; i < ticks; i++) {
-        runGameLoop(true_duration / ticks / 1000);
+
+    if (window.game.last_auto_save === null || performance.now() - window.game.last_auto_save >= required_time) {
+        auto_save();
+        window.game.last_auto_save = performance.now();
     }
 }
 
-function runGameLoop(duration: number) {
-    A_runGameLoop(duration);
+// durationMs is in millisecond
+export function gameLoop(durationMs: number) {
+    let true_durationMs = durationMs * window.game.GLOBAL_SPEED;
+    runGameLoop(true_durationMs / 1000);
 
-    if (window.player.A.Ap.gte(Decimal.dNumberMax)) {
+    check_auto_save();
+}
+
+function runGameLoop(duration: number) {
+    A.runGameLoop(duration);
+
+    if (Ap.amount.gte(Decimal.dNumberMax)) {
         if (!window.player.progress.endgame) {
             window.player.progress.endgame = true;
             window.player.progress.end_time = performance.now();

@@ -25,11 +25,11 @@ function formatGameTime(milliseconds: number): string {
   const seconds = remainingSeconds % 60;
 
   const parts = [];
-  if (days > 0) parts.push(`${days}天`);
+  if (days > 0) parts.push(`${ days }天`);
   parts.push(
-      `${hours.toString().padStart(2, '0')}小时`,
-      `${minutes.toString().padStart(2, '0')}分钟`,
-      `${seconds.toString().padStart(2, '0')}秒`
+      `${ hours.toString().padStart(2, '0') }小时`,
+      `${ minutes.toString().padStart(2, '0') }分钟`,
+      `${ seconds.toString().padStart(2, '0') }秒`,
   );
 
   return parts.join('');
@@ -39,7 +39,8 @@ function formatGameTime(milliseconds: number): string {
 <template>
   <div v-if="player.progress.endgame &&! player.progress.endgame_continue" class="message-window">
     <h3>恭喜你，游戏胜利！</h3>
-    <span style="text-align: center">你的用时: {{formatGameTime(player.progress.end_time - player.progress.start_time)}}</span>
+    <span
+        style="text-align: center">你的用时: {{ formatGameTime(player.progress.end_time - player.progress.start_time) }}</span>
     <button class="message-button" @click="continue_game()">继续玩</button>
     <button class="message-button" @click="restart_game()">重新开始</button>
   </div>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { run_on_frame } from "@/components/misc/run-on-frame.ts";
-import { TabId } from "@/core/typing.ts";
+import { TabId } from "@/core/defines.ts";
 import { watchEffect } from "vue";
 
 function unlock(tabId: TabId): boolean {

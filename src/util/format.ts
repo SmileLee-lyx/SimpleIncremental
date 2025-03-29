@@ -1,13 +1,12 @@
 import Decimal, { type DecimalSource } from "break_eternity.js";
 
-declare global {
-    interface Window {
-    }
-}
-
 function format_pow10(mag: number, precision: number = 6): string {
     let c = Math.floor(mag);
     let a = Math.pow(10, mag - c);
+    if (a.toPrecision(precision).startsWith("10")) {
+        a = a / 10;
+        c = c + 1;
+    }
     return a.toPrecision(precision) + "e" + c;
 }
 
@@ -61,10 +60,6 @@ function format_raw(sign: number, mag: number, layer: number): string {
     }
 }
 
-/**
- *
- * @param num
- */
 export function format(num: DecimalSource): string {
     num = new Decimal(num);
     return format_raw(num.sign, num.mag, num.layer);
@@ -77,3 +72,28 @@ declare global {
 }
 
 window.format = format;
+
+
+export type FormattedText = undefined | FormattedText[] | string | number | Decimal |
+    { type: 'span' | 'sub', class?: string[], text: FormattedText, } |
+    { type: 'br' };
+
+export function br(): FormattedText {
+    return { type: 'br' };
+}
+
+export function A_text(text: FormattedText, ...extra_classes: string[]): FormattedText {
+    return { type: 'span', class: ['A-text', ...extra_classes], text: text };
+}
+
+export function large(text: FormattedText, ...extra_classes: string[]): FormattedText {
+    return { type: 'span', class: ['large', ...extra_classes], text: text };
+}
+
+export function fixed_width(text: FormattedText, ...extra_classes: string[]): FormattedText {
+    return { type: 'span', class: ['fixed-width', ...extra_classes], text: text };
+}
+
+export function sub(text: FormattedText, ...classes: string[]): FormattedText {
+    return { type: 'sub', class: [...classes], text: text };
+}

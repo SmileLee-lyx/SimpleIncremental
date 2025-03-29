@@ -1,15 +1,12 @@
 @use "transition.scss";
+@use "text.scss";
 @use "sidebar.scss";
 @use "tab.scss";
 @use "tooltip.scss";
-@use "button";
+@use "button.scss";
 
 body {
   margin: 0;
-}
-
-.A-text {
-  color: red
 }
 
 .message-window {
