@@ -60,6 +60,7 @@ const As = {
         for (let layer = 1; layer <= 8; layer++) {
             Ai(layer).amount = Ai(layer).bought = DC.d0;
         }
+        At.bought = DC.d0;
     },
 
     // formatted text
