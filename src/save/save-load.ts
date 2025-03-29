@@ -104,6 +104,7 @@ export function manual_delete(name: string): boolean {
 export function create_empty_manual_save(name: string): boolean {
     if (!manual_save_slots.includes(name)) {
         manual_save_slots.push(name);
+        saveRaw("manual_save_slots", manual_save_slots);
         return true;
     }
     return false;
