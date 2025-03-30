@@ -1,5 +1,5 @@
-import DC from "@/core/DC.ts";
-import { BuyMode } from "@/core/defines.ts";
+import DC from "@/core/main/DC.ts";
+import { BuyMode } from "@/core/main/defines.ts";
 import A from "@/core/instances/A/A.js";
 import Ai from "@/core/instances/A/Ai.js";
 import Ap from "@/core/instances/A/Ap.js";

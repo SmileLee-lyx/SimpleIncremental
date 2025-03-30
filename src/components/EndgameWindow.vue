@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defaultPlayer } from "@/core/defines.ts";
+import { defaultPlayer } from "@/core/main/defines.ts";
 import { assign, cloneDeep } from "lodash";
 
 import "@/assets/main.scss";

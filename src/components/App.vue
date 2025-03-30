@@ -11,11 +11,11 @@ import AUpgradesTab from "@/components/Tabs/AUpgradesTab.vue";
 import CheatTab from "@/components/Tabs/CheatTab.vue";
 import SettingsTab from "@/components/Tabs/SettingsTab.vue";
 import TabUnlocker from "@/components/TabUnlocker.vue";
-import { TabId } from "@/core/defines.ts";
+import { TabId } from "@/core/main/defines.ts";
 
 import "@/assets/main.scss";
-import { gameLoop } from "@/core/game-loop.ts";
-import { init } from "@/core/init.ts";
+import { gameLoop } from "@/core/main/game-loop.ts";
+import { init } from "@/core/main/init.ts";
 import type { FormattedText } from "@/util/format.js";
 import { type Component, computed, type ComputedRef } from "vue";
 

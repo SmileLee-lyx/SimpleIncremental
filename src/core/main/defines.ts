@@ -1,5 +1,5 @@
-import DC from "@/core/DC.ts";
-import { AutoSaveSetting, SignSetting } from "@/core/settings.ts";
+import DC from "@/core/main/DC.ts";
+import { AutoSaveSetting, SignSetting } from "@/core/main/settings.ts";
 import Decimal from "break_eternity.js";
 import { cloneDeep } from "lodash";
 import { reactive } from "vue";

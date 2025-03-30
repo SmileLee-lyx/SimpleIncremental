@@ -1,10 +1,10 @@
-import DC from "@/core/DC.js";
-import { BuyMode } from "@/core/defines.js";
+import DC from "@/core/main/DC.js";
+import { BuyMode } from "@/core/main/defines.js";
 import Ai from "@/core/instances/A/Ai.js";
 import Ap from "@/core/instances/A/Ap.js";
 import At from "@/core/instances/A/At.js";
 import { register } from "@/core/instances/instance-init.js";
-import { SignSetting } from "@/core/settings.js";
+import { SignSetting } from "@/core/main/settings.js";
 import type { FormattedText } from "@/util/format.js";
 import Decimal from "break_eternity.js";
 import { ref } from "vue";

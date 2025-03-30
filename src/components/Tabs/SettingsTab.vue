@@ -4,17 +4,20 @@ import InputBox from "@/components/objects/InputBox.vue";
 import MessageBox from "@/components/objects/MessageBox.vue";
 import SaveLoadPad from "@/components/objects/SaveLoadPad.vue";
 import SelectButton from "@/components/objects/SelectButton.vue";
-import { defaultPlayer } from "@/core/defines.ts";
-import { SignSetting } from "@/core/settings.ts";
+import { full_reset } from "@/core/main/full_reset.js";
+import { SignSetting } from "@/core/main/settings.ts";
 import {
   create_empty_manual_save,
   get_manual_save_slots,
+  load_from_data,
   manual_delete,
   manual_load,
   manual_save,
+  saved_data,
 } from "@/save/save-load.js";
+import { deserialize, serialize } from "@/save/serializer.js";
 import { br } from "@/util/format.js";
-import { assign, cloneDeep } from "lodash";
+import clipboard from "clipboardy";
 import { type Ref, ref } from "vue";
 
 let game = window.game;
@@ -22,7 +25,7 @@ let player = window.player;
 
 let show_reset_confirm = ref(0);
 
-function confirm_reset(text: string) {
+function reset_action(text: string) {
   if (text.trim() === "A comathematician is a machine for turning cotheorems into ffee.") {
     show_reset_confirm.value = 2;
   } else if (text.trim() === "cheat") {
@@ -31,11 +34,10 @@ function confirm_reset(text: string) {
   }
 }
 
-function full_reset() {
+function confirm_reset() {
   show_reset_confirm.value = 0;
 
-  let defaultCopy = cloneDeep(defaultPlayer);
-  assign(player, defaultCopy);
+  full_reset();
 }
 
 let sign_settings: SignSetting[] = Object.values(SignSetting).filter(x => typeof x === "number");
@@ -112,6 +114,35 @@ function confirm_create(target: string) {
   update_save_slots();
 }
 
+function export_save() {
+  let data = serialize(saved_data());
+  try {
+    clipboard.write("SaveStart" + data + "SaveEnd");
+    alert("存档已复制到剪贴板!");
+  } catch (e) {
+    alert("导出到剪贴板失败");
+    console.error(e);
+  }
+}
+
+let show_import_save_window: Ref<boolean> = ref(false);
+
+function import_save() {
+  show_import_save_window.value = true;
+}
+
+function confirm_import(data: string) {
+  if (!(data.startsWith("SaveStart") && data.endsWith("SaveEnd"))) {
+    alert("存档识别失败!");
+    return;
+  }
+  load_from_data(deserialize(data.substring(9, data.length - 7)), (e) => {
+    alert("存档读取失败!");
+    console.log(e);
+  });
+  show_import_save_window.value = false;
+}
+
 </script>
 
 <template>
@@ -125,14 +156,17 @@ function confirm_create(target: string) {
       <template #selection>手动签到显示: <br>{{ sign_settings_configs[player.settings.sign_setting].select }}</template>
     </SelectButton>
     <button class="select-button" @click="open_save_load()">打开存档界面</button>
+    <br>
+    <button class="select-button" @click="export_save()">导出存档</button>
+    <button class="select-button" @click="import_save()">导入存档</button>
   </div>
 
   <SaveLoadPad
       v-if="show_save_load"
       :slots="save_slots"
       @action="save_load_action"
-      @create="create_save"
       @close="() => show_save_load = false"
+      @create="create_save"
   ></SaveLoadPad>
 
   <InputBox
@@ -140,23 +174,16 @@ function confirm_create(target: string) {
       placeholder=""
       type="string"
       @close="show_reset_confirm = 0"
-      @done="confirm_reset"
-
-      @paste="(e: Event) => { e.preventDefault(); show_reset_confirm = 3; }"
+      @done="reset_action"
   >请输入以下句子以确认: "A comathematician is a machine for turning cotheorems into ffee."
   </InputBox>
   <ConfirmBox
       v-if="show_reset_confirm === 2"
       @close="show_reset_confirm = 0"
-      @done="full_reset()"
+      @done="confirm_reset()"
   >
     确定要重置吗?
   </ConfirmBox>
-  <MessageBox
-      v-if="show_reset_confirm === 3"
-      @done="show_reset_confirm = 1">
-    请手动输入!
-  </MessageBox>
 
   <InputBox
       v-if="show_create_save"
@@ -196,6 +223,15 @@ function confirm_create(target: string) {
   >
     确定要删除栏位 {{ save_load_target }} 吗?
   </ConfirmBox>
+
+  <InputBox
+      v-if="show_import_save_window"
+      placeholder=""
+      type="string"
+      @close="show_import_save_window = false"
+      @done="confirm_import"
+  >请输入存档.
+  </InputBox>
 </template>
 
 <style scoped>

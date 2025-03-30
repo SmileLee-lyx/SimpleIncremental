@@ -1,6 +1,6 @@
 import A from "@/core/instances/A/A.js";
 import Ap from "@/core/instances/A/Ap.js";
-import { AutoSaveSetting } from "@/core/settings.js";
+import { AutoSaveSetting } from "@/core/main/settings.js";
 import { auto_save } from "@/save/save-load.js";
 import Decimal from "break_eternity.js";
 

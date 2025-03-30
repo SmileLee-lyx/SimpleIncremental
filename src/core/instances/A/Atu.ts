@@ -1,4 +1,4 @@
-import DC from "@/core/DC.ts";
+import DC from "@/core/main/DC.ts";
 import Ai from "@/core/instances/A/Ai.ts";
 import Ap from "@/core/instances/A/Ap.ts";
 import As from "@/core/instances/A/As.ts";

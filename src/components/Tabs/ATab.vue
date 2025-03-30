@@ -5,7 +5,7 @@ import PurchaseButton from "@/components/objects/PurchaseButton.vue";
 import TextFormatter from "@/components/objects/TextFormatter.vue";
 import ToggleButton from "@/components/objects/ToggleButton.vue";
 import UpgradeButton from "@/components/objects/UpgradeButton.vue";
-import { AlertId } from "@/core/defines.ts";
+import { AlertId } from "@/core/main/defines.ts";
 import A from "@/core/instances/A/A.js";
 import Ai from "@/core/instances/A/Ai.ts";
 import As from "@/core/instances/A/As.js";
