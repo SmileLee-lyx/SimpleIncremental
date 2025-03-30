@@ -2,7 +2,7 @@ import { ref, type Ref } from "vue";
 
 export const versions: Ref<Record<string, { name: string, path: string }>> = ref({});
 
-fetch('/versions.json')
+fetch('./versions.json')
     .then((response) => response.json())
     .then((data) => {
         versions.value = data;
