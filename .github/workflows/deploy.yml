@@ -3,6 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
+      - index
       - master
       - v1alpha
 
@@ -25,18 +26,11 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Deploy to GitHub Pages (Master)
+      - name: Deploy to GitHub Pages (index)
         if: github.ref == 'refs/heads/master'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           destination_dir: ''
-
-      - name: Deploy to GitHub Pages (v1)
-        if: github.ref == 'refs/heads/v1alpha'
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          destination_dir: 'v1alpha'
+          keep_files: true
