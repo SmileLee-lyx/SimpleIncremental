@@ -7,15 +7,15 @@ import { toRaw } from "vue";
 const VERSION = 0;
 
 export function deleteRaw(slot: string): void {
-    localStorage.removeItem(slot);
+    localStorage.removeItem(window.location.pathname + slot);
 }
 
 export function saveRaw(slot: string, data: any): void {
-    localStorage.setItem(slot, serialize(data));
+    localStorage.setItem(window.location.pathname + slot, serialize(data));
 }
 
 export function loadRaw(slot: string): any {
-    let item: string | null = localStorage.getItem(slot);
+    let item: string | null = localStorage.getItem(window.location.pathname + slot);
     if (item == null) return null;
     return deserialize(item);
 }
