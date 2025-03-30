@@ -6,6 +6,7 @@ import { versions } from "@/core/versions.js";
 </script>
 
 <template>
+  <h2>请选择版本:</h2>
   <div v-for="v in Object.keys(versions)">
     <JumpButton
         :code="v"
@@ -16,13 +17,5 @@ import { versions } from "@/core/versions.js";
 </template>
 
 <style scoped>
-.auto-save-time {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  z-index: 10000;
-  font-size: 12px;
-  border: black solid 1px;
-  background: white;
-}
+
 </style>

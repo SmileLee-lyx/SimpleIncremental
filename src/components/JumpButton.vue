@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import '@/assets/button.scss'
+
 const props = defineProps<{
   code: string;
   name: string;
@@ -14,7 +16,7 @@ function open_path(path: string) {
 </script>
 
 <template>
-  <button @click="open_path(path)">
+  <button class="select-button" @click="open_path(path)">
     {{ name }}
   </button>
 </template>

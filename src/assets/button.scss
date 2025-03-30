@@ -1,7 +1,5 @@
-.general-button {
-  border: 3px solid red;
+.select-button {
   border-radius: 8px;
-  background-color: #ccc;
   color: #333;
   font-size: 16px;
   cursor: pointer;
@@ -10,79 +8,9 @@
   line-height: 16px;
   white-space: normal;
   vertical-align: middle;
-
-  &.disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-
-  &.fully-bought {
-    background-color: #4ce04c;
-    border-color: black;
-  }
-
-  &.buyable {
-    background-color: #a8f0a8;
-    border-color: green;
-  }
-}
-
-.upgrade-button {
-  @extend .general-button;
-
   position: relative;
   width: 150px;
-  height: 100px;
-}
-
-.purchase-button {
-  @extend .general-button;
-
-  position: relative;
-  width: 200px;
-  height: 40px;
-}
-
-.select-button {
-  @extend .general-button;
-
-  position: relative;
-  width: 150px;
-  height: 100px;
+  height: 30px;
   border: 3px solid black;
   background-color: white;
-}
-
-.custom-select {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  z-index: 1000;
-}
-
-.dropdown-item {
-  padding: 8px 16px;
-  cursor: pointer;
-}
-
-.dropdown-item:hover {
-  background-color: #f0f0f0;
-}
-
-.upgrade-button.buyable:hover::before, .purchase-button.buyable:hover::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.1);
 }
