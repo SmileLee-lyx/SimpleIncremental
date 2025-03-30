@@ -15,7 +15,7 @@ export function saveRaw(slot: string, data: any): void {
 }
 
 export function loadRaw(slot: string): any {
-    let item: string | null = localStorage.getItem(slot);
+    let item: string | null = localStorage.getItem(window.location.pathname + slot);
     if (item == null) return null;
     return deserialize(item);
 }
