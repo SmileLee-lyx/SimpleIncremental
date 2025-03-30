@@ -1,0 +1,14 @@
+{
+  "master": {
+    "name": "正式版",
+    "path": "latest/"
+  },
+  "v1alpha": {
+    "name": "v1α 开发版",
+    "path": "v1alpha/"
+  },
+  "v1": {
+    "name": "v1 正式版",
+    "path": "v1/"
+  }
+}
