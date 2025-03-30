@@ -1,4 +1,4 @@
-import DC from "@/core/DC.js";
+import DC from "@/core/main/DC.js";
 import Ai from "@/core/instances/A/Ai.ts";
 import At from "@/core/instances/A/At.ts";
 import { register } from "@/core/instances/instance-init.js";

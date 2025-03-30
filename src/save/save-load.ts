@@ -1,3 +1,4 @@
+import type { Player } from "@/core/main/defines.js";
 import { migration } from "@/save/migration.js";
 import { deserialize, serialize } from "@/save/serializer.js";
 import { assign } from "lodash";
@@ -73,21 +74,21 @@ export function manual_save(name: string) {
     }
 }
 
-export function load_from_data(data: any, onerror?: () => void): boolean {
+export function load_from_data(data: any, onerror?: (e: any) => void): boolean {
     try {
         assign(window.player, migration(data));
         return true;
     } catch (e) {
-        if (onerror !== undefined) onerror();
+        if (onerror !== undefined) onerror(e);
         return false;
     }
 }
 
-export function load_current_auto_save(onerror?: () => void) {
+export function load_current_auto_save(onerror?: (e: any) => void) {
     load_from_data(loadRaw(auto_save_name()), onerror);
 }
 
-export function manual_load(name: string, onerror?: () => void): boolean {
+export function manual_load(name: string, onerror?: (e: any) => void): boolean {
     return load_from_data(loadRaw(name), onerror);
 }
 

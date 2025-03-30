@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type TabConfig, type TabGroupConfig, TabGroupId, TabId } from "@/core/defines.ts";
+import { type TabConfig, type TabGroupConfig, TabGroupId, TabId } from "@/core/main/defines.ts";
 import { computed, type ComputedRef, ref, type Ref } from "vue";
 
 let game = window.game;

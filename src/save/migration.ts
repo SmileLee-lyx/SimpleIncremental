@@ -1,4 +1,4 @@
-import { type Player } from "@/core/defines.js";
+import { type Player } from "@/core/main/defines.js";
 
 export function migration(data: any): Player {
     if (typeof data !== "object")

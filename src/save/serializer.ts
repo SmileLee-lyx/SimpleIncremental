@@ -19,9 +19,19 @@ class DecimalSerializer {
 }
 
 export function serialize(data: any): string {
-    return JSON.stringify(data, DecimalSerializer.replacer);
+    return Buffer.from(JSON.stringify(data, DecimalSerializer.replacer)).toString('base64');
 }
 
 export function deserialize(data: string): any {
-    return JSON.parse(data, DecimalSerializer.reviver);
+    return JSON.parse(Buffer.from(data, 'base64').toString('utf-8'), DecimalSerializer.reviver);
 }
+
+declare global {
+    interface Window {
+        serialize: typeof serialize;
+        deserialize: typeof deserialize;
+    }
+}
+
+window.serialize = serialize;
+window.deserialize = deserialize;
