@@ -1,10 +1,8 @@
 <script lang="ts" setup>
-import ConfirmBox from "@/components/objects/ConfirmBox.vue";
-import InputBox from "@/components/objects/InputBox.vue";
-import MessageBox from "@/components/objects/MessageBox.vue";
 import SaveLoadPad from "@/components/objects/SaveLoadPad.vue";
 import SelectButton from "@/components/objects/SelectButton.vue";
-import { full_reset } from "@/core/main/full_reset.js";
+import { fullReset } from "@/core/main/full-reset.js";
+import { add_global_message, manual_close_message } from "@/core/main/global-messages.js";
 import { SignSetting } from "@/core/main/settings.ts";
 import {
   create_empty_manual_save,
@@ -23,21 +21,41 @@ import { type Ref, ref } from "vue";
 let game = window.game;
 let player = window.player;
 
-let show_reset_confirm = ref(0);
+const RESET_CONFIRM_TEXT = //"A comathematician is a machine for turning cotheorems into ffee.";
+    "233";
 
-function reset_action(text: string) {
-  if (text.trim() === "A comathematician is a machine for turning cotheorems into ffee.") {
-    show_reset_confirm.value = 2;
-  } else if (text.trim() === "cheat") {
-    game.show_cheat = true;
-    show_reset_confirm.value = 0;
-  }
+function show_reset_confirm_text() {
+  const reset_input_box_index: Ref<number> = ref(0);
+  reset_input_box_index.value = add_global_message({
+    type: 'input_box',
+    message_text: [
+      "请输入以下内容以确认硬重置 (注意标点符号):", br(),
+      RESET_CONFIRM_TEXT,
+    ],
+    done: (text) => show_reset_confirm(text, reset_input_box_index.value),
+  });
 }
 
-function confirm_reset() {
-  show_reset_confirm.value = 0;
+function show_reset_confirm(text: string, index: number): boolean {
+  if (text.trim() === RESET_CONFIRM_TEXT) {
+    add_global_message({
+      type: 'confirm',
+      message_text: "确定要重置吗?",
+      done: () => confirm_reset(index),
+    });
+  } else {
+    add_global_message({
+      type: 'alert',
+      message_text: "输入的内容不正确!",
+    });
+  }
+  return true;
+}
 
-  full_reset();
+function confirm_reset(index: number) {
+  manual_close_message(index);
+
+  fullReset();
 }
 
 let sign_settings: SignSetting[] = Object.values(SignSetting).filter(x => typeof x === "number");
@@ -49,13 +67,8 @@ let sign_settings_configs = {
   [SignSetting.NEVER]: { description: "关闭", select: "关闭" },
 };
 
-let save_slots: Ref<string[]> = ref([]);
-
 let show_save_load: Ref<boolean> = ref(false);
-let show_create_save: Ref<boolean> = ref(false);
-let save_load_target: Ref<string | null> = ref(null);
-let save_load_mode: Ref<'save' | 'load' | 'delete' | null> = ref(null);
-let show_save_load_no_target_message: Ref<boolean> = ref(false);
+let save_slots: Ref<string[]> = ref([]);
 
 function update_save_slots() {
   save_slots.value = [...get_manual_save_slots()];
@@ -68,49 +81,68 @@ function open_save_load() {
 
 function save_load_action(mode: 'save' | 'load' | 'delete', target: string | null) {
   if (target === null) {
-    show_save_load_no_target_message.value = true;
+    add_global_message({
+      type: 'alert',
+      message_text: "未指定存档!",
+    });
     return;
   }
-  save_load_mode.value = mode;
-  save_load_target.value = target;
+  switch (mode) {
+    case 'save':
+      add_global_message({
+        type: 'confirm',
+        message_text: ["确定要保存到档位 ", target, " 吗?"],
+        done() {
+          confirm_save(target);
+        },
+      });
+      return;
+    case 'load':
+      add_global_message({
+        type: 'confirm',
+        message_text: ["确定要读取档位 ", target, " 吗?"],
+        done() {
+          confirm_load(target);
+        },
+      });
+      return;
+    case 'delete':
+      add_global_message({
+        type: 'confirm',
+        message_text: ["确定要删除档位 ", target, " 吗?"],
+        done() {
+          confirm_delete(target);
+        },
+      });
+      return;
+  }
 }
 
-function cancel_save_load() {
-  save_load_mode.value = null;
-  save_load_target.value = null;
-}
-
-function confirm_save() {
-  let target = save_load_target.value as string;
+function confirm_save(target: string) {
   manual_save(target);
-  save_load_mode.value = null;
-  save_load_target.value = null;
   update_save_slots();
 }
 
-function confirm_load() {
-  let target = save_load_target.value as string;
+function confirm_load(target: string) {
   manual_load(target);
-  save_load_mode.value = null;
-  save_load_target.value = null;
   update_save_slots();
 }
 
-function confirm_delete() {
-  let target = save_load_target.value as string;
+function confirm_delete(target: string) {
   manual_delete(target);
-  save_load_mode.value = null;
-  save_load_target.value = null;
   update_save_slots();
 }
 
 function create_save() {
-  show_create_save.value = true;
+  add_global_message({
+    type: 'input_box',
+    message_text: "请输入存档名称",
+    done: confirm_create,
+  });
 }
 
 function confirm_create(target: string) {
   create_empty_manual_save(target);
-  show_create_save.value = false;
   update_save_slots();
 }
 
@@ -118,29 +150,48 @@ function export_save() {
   let data = serialize(saved_data());
   try {
     clipboard.write("SaveStart" + data + "SaveEnd");
-    alert("存档已复制到剪贴板!");
+    add_global_message({
+      type: 'alert',
+      message_text: "已成功导出到剪贴板.",
+    });
   } catch (e) {
-    alert("导出到剪贴板失败");
+    add_global_message({
+      type: 'alert',
+      message_text: "导出到剪贴板失败!",
+    });
     console.error(e);
   }
 }
 
-let show_import_save_window: Ref<boolean> = ref(false);
-
 function import_save() {
-  show_import_save_window.value = true;
+  add_global_message({
+    type: 'input_box',
+    message_text: "请输入导出的存档",
+    done: confirm_import,
+  })
 }
 
 function confirm_import(data: string) {
   if (!(data.startsWith("SaveStart") && data.endsWith("SaveEnd"))) {
-    alert("存档识别失败!");
+    add_global_message({
+      type: 'alert',
+      message_text: "存档识别失败!",
+    });
     return;
   }
-  load_from_data(deserialize(data.substring(9, data.length - 7)), (e) => {
-    alert("存档读取失败!");
+  let result = load_from_data(deserialize(data.substring(9, data.length - 7)), (e) => {
+    add_global_message({
+      type: 'alert',
+      message_text: "存档读取失败!",
+    });
     console.log(e);
   });
-  show_import_save_window.value = false;
+  if (result) {
+    add_global_message({
+      type: 'alert',
+      message_text: "存档导入成功!",
+    });
+  }
 }
 
 </script>
@@ -150,7 +201,7 @@ function confirm_import(data: string) {
     <span class="text-title">设置页</span>
     <br>
     <br>
-    <button class="select-button" @click="show_reset_confirm = 1">硬重置存档</button>
+    <button class="select-button" @click="show_reset_confirm_text()">硬重置存档</button>
     <SelectButton v-model="player.settings.sign_setting" :values="sign_settings">
       <template #option="{ value }">{{ sign_settings_configs[value as SignSetting].description }}</template>
       <template #selection>手动签到显示: <br>{{ sign_settings_configs[player.settings.sign_setting].select }}</template>
@@ -168,77 +219,9 @@ function confirm_import(data: string) {
       @close="() => show_save_load = false"
       @create="create_save"
   ></SaveLoadPad>
-
-  <InputBox
-      v-if="show_reset_confirm === 1"
-      placeholder=""
-      type="string"
-      @close="show_reset_confirm = 0"
-      @done="reset_action"
-  >请输入以下句子以确认: "A comathematician is a machine for turning cotheorems into ffee."
-  </InputBox>
-  <ConfirmBox
-      v-if="show_reset_confirm === 2"
-      @close="show_reset_confirm = 0"
-      @done="confirm_reset()"
-  >
-    确定要重置吗?
-  </ConfirmBox>
-
-  <InputBox
-      v-if="show_create_save"
-      placeholder=""
-      type="string"
-      @close="show_create_save = false"
-      @done="confirm_create"
-  >请输入存档名称.
-  </InputBox>
-
-  <MessageBox
-      v-if="show_save_load_no_target_message"
-      @done="show_save_load_no_target_message = false">
-    请选择存档位.
-  </MessageBox>
-
-  <ConfirmBox
-      v-if="save_load_mode === 'save'"
-      @close="cancel_save_load()"
-      @done="confirm_save()"
-  >
-    确定要保存到栏位 {{ save_load_target }} 吗?
-  </ConfirmBox>
-
-  <ConfirmBox
-      v-if="save_load_mode === 'load'"
-      @close="cancel_save_load()"
-      @done="confirm_load()"
-  >
-    确定要读取栏位 {{ save_load_target }} 吗?
-  </ConfirmBox>
-
-  <ConfirmBox
-      v-if="save_load_mode === 'delete'"
-      @close="cancel_save_load()"
-      @done="confirm_delete()"
-  >
-    确定要删除栏位 {{ save_load_target }} 吗?
-  </ConfirmBox>
-
-  <InputBox
-      v-if="show_import_save_window"
-      placeholder=""
-      type="string"
-      @close="show_import_save_window = false"
-      @done="confirm_import"
-  >请输入存档.
-  </InputBox>
 </template>
 
 <style scoped>
-.text-box {
-  text-align: center;
-}
-
 .text-title {
   font-size: 32px;
 }

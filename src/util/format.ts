@@ -74,7 +74,7 @@ declare global {
 window.format = format;
 
 
-export type FormattedText = undefined | FormattedText[] | string | number | Decimal |
+export type FormattedText = null | FormattedText[] | string | number | Decimal |
     { type: 'span' | 'sub', class?: string[], text: FormattedText, } |
     { type: 'br' };
 
@@ -84,6 +84,10 @@ export function br(): FormattedText {
 
 export function A_text(text: FormattedText, ...extra_classes: string[]): FormattedText {
     return { type: 'span', class: ['A-text', ...extra_classes], text: text };
+}
+
+export function B_text(text: FormattedText, ...extra_classes: string[]): FormattedText {
+    return { type: 'span', class: ['B-text', ...extra_classes], text: text };
 }
 
 export function large(text: FormattedText, ...extra_classes: string[]): FormattedText {

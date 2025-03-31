@@ -1,28 +1,14 @@
 <script lang="ts" setup>
 import { is_shift_pressed } from "@/components/misc/global-keyboard-press.ts";
-import MessageBox from "@/components/objects/MessageBox.vue";
 import PurchaseButton from "@/components/objects/PurchaseButton.vue";
 import TextFormatter from "@/components/objects/TextFormatter.vue";
 import ToggleButton from "@/components/objects/ToggleButton.vue";
 import UpgradeButton from "@/components/objects/UpgradeButton.vue";
-import { AlertId } from "@/core/main/defines.ts";
 import A from "@/core/instances/A/A.js";
 import Ai from "@/core/instances/A/Ai.ts";
 import As from "@/core/instances/A/As.js";
 import At from "@/core/instances/A/At.ts";
 import Atu from "@/core/instances/A/Atu.js";
-import { ref, type Ref } from "vue";
-
-let game = window.game;
-let player = window.player;
-let DEBUG = window.DEBUG;
-
-let show_shift_alert = ref(false);
-
-let sign_nothing_msg_show: Ref<boolean> = ref(false);
-
-let show_sign_setting_alert = ref(false);
-
 </script>
 
 <template>
@@ -42,7 +28,7 @@ let show_sign_setting_alert = ref(false);
     <TextFormatter :text="At.auto_sign_description()"/>
     <br>
     <UpgradeButton
-        :buy="A.sign"
+        :buy="A.manual_sign"
         :visible="A.sign_visible">
       <template #text>
         <TextFormatter :text="A.sign_message()"/>
@@ -113,18 +99,6 @@ let show_sign_setting_alert = ref(false);
       </template>
     </PurchaseButton>
   </div>
-  <MessageBox v-if="sign_nothing_msg_show" @done="sign_nothing_msg_show = false">
-    请先购买 <span class="A-text">A1</span> 再签到.
-  </MessageBox>
-  <MessageBox v-if="show_sign_setting_alert && !player.progress.ignored_alerts.includes(AlertId.HIDE_SIGN)"
-              @done="player.progress.ignored_alerts.push(AlertId.HIDE_SIGN)">
-    在自动签到速度首次大于 5 后, 手动签到按钮将仅在不能自动签到时显示.
-    可在设置页修改手动签到按钮的显示逻辑.
-  </MessageBox>
-  <MessageBox v-if="show_shift_alert && !player.progress.ignored_alerts.includes(AlertId.SHIFT)"
-              @done="player.progress.ignored_alerts.push(AlertId.SHIFT)">
-    很多按钮都有额外信息, 可以按住 SHIFT 键查看.
-  </MessageBox>
 </template>
 
 <style scoped>
@@ -159,10 +133,6 @@ let show_sign_setting_alert = ref(false);
 .small-text {
   line-height: 10px;
   font-size: 14px;
-}
-
-.small-small-text {
-  font-size: 12px;
 }
 
 .buy-mode-button {

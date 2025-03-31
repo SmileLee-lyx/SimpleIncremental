@@ -1,12 +1,14 @@
-import DC from "@/core/main/DC.js";
-import { BuyMode } from "@/core/main/defines.js";
 import Ai from "@/core/instances/A/Ai.js";
 import Ap from "@/core/instances/A/Ap.js";
 import At from "@/core/instances/A/At.js";
 import { register } from "@/core/instances/instance-init.js";
+import DC from "@/core/main/DC.js";
+import { BuyMode } from "@/core/main/defines.js";
+import { add_global_message } from "@/core/main/global-messages.js";
 import { SignSetting } from "@/core/main/settings.js";
 import type { FormattedText } from "@/util/format.js";
 import Decimal from "break_eternity.js";
+import { range } from "lodash";
 import { ref } from "vue";
 
 function _automation_Ai(layer: number) {
@@ -49,7 +51,14 @@ const A = {
 
     // sign
 
-    sign() {
+    manual_sign() {
+        if (!range(1, 9).some((layer) => Ai(layer).bought.gt(0))) {
+            add_global_message({
+                type: 'alert',
+                message_text: ["请先购买 ", Ai(1).formatted_name(), " 再签到!"],
+            });
+            return;
+        }
         A.run_sign();
     },
 
@@ -63,15 +72,7 @@ const A = {
     sign_visible(): boolean {
         switch (window.player.settings.sign_setting) {
             case SignSetting.DEFAULT: {
-                if (At.unlocked && At.sign_speed().gte("5")) {
-                    window.player.settings.sign_setting = SignSetting.NEVER;
-                    // show_sign_setting_alert.value = true;
-                    return false;
-                }
-                return true;
-            }
-            case SignSetting.WHEN_SLOW: {
-                return !At.unlocked || At.sign_speed().lt(5);
+                return !(At.unlocked && At.sign_speed().gt("5"));
             }
             case SignSetting.ALWAYS: {
                 return true;

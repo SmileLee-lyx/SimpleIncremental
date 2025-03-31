@@ -1,4 +1,3 @@
-import type { Player } from "@/core/main/defines.js";
 import { migration } from "@/save/migration.js";
 import { deserialize, serialize } from "@/save/serializer.js";
 import { assign } from "lodash";

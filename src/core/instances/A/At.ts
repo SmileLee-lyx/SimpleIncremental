@@ -114,7 +114,7 @@ const At = {
             case BuyMode.BUY_MAX:
                 return ["购买最大", At.formatted_name()];
             default:
-                return undefined;
+                return null;
         }
     },
 
@@ -124,7 +124,7 @@ const At = {
         }
         let next_sign_message: FormattedText;
         if (At.sign_speed().gt(10)) {
-            next_sign_message = undefined;
+            next_sign_message = null;
         } else {
             next_sign_message = [" 下次自动签到时间: ", fixed_width(A.time_to_next_sign_ms(), 'width-30'), "毫秒."];
         }

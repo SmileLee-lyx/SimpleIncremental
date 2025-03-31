@@ -1,12 +1,20 @@
 <script lang="ts" setup>
-import InputBox from "@/components/objects/InputBox.vue";
+import TextFormatter from "@/components/objects/TextFormatter.vue";
 import UpgradeButton from "@/components/objects/UpgradeButton.vue";
-import { ref } from "vue";
+import As from "@/core/instances/A/As.js";
+import Atu from "@/core/instances/A/Atu.js";
+import { add_global_message } from "@/core/main/global-messages.js";
 
 let game = window.game;
 let player = window.player;
 
-let show_speed = ref(false);
+function modify_game_speed() {
+  add_global_message({
+    type: 'input_box',
+    message_text: "请输入游戏速度. 该数值会被解释为 number 类型且不会被校验.",
+    done: upgradeSpeed,
+  });
+}
 
 function upgradeSpeed(speed: string) {
   let newSpeed = Number(speed);
@@ -17,7 +25,6 @@ function upgradeSpeed(speed: string) {
   }
 }
 
-let console = window.console;
 </script>
 
 <template>
@@ -26,24 +33,19 @@ let console = window.console;
 
     <br>
 
-    <button class="select-button" @click="show_speed = true">修改游戏速度</button>
+    <button class="select-button" @click="modify_game_speed">修改游戏速度</button>
     <UpgradeButton
         :buy="() => player.A.As = player.A.As.plus(1)">
-      <template #text>白嫖一个 <span class="A-text">A<sub>*</sub></span></template>
+      <template #text>
+        <TextFormatter :text="['白嫖一个 ', As.formatted_name()]"/>
+      </template>
     </UpgradeButton>
     <UpgradeButton
         :buy="() => player.A.Atu = player.A.Atu.plus(1)">
-      <template #text>白嫖一个 <span class="A-text">A<sub>tu</sub></span></template>
+      <template #text>
+        <TextFormatter :text="['白嫖一个 ', Atu.formatted_name()]"/>
+      </template>
     </UpgradeButton>
-
-    <InputBox
-        v-if="show_speed"
-        placeholder="1"
-        type="number"
-        @close="show_speed = false"
-        @done="(speed) => { upgradeSpeed(speed); show_speed = false }"
-    >请输入游戏速度 (不会被校验, 后果自负).
-    </InputBox>
   </div>
 </template>
 

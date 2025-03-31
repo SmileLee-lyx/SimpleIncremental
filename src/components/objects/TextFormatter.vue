@@ -8,7 +8,7 @@ let props = defineProps<{
 }>();
 
 function parseText_impl(text: FormattedText): (VNode | string)[] {
-  if (text === undefined) return [];
+  if (text === null) return [];
   if (typeof text === "string") return [text];
   if (typeof text === "number") return [text.toString()];
   if (Array.isArray(text)) return text.flatMap(parseText_impl);

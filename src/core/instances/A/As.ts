@@ -81,7 +81,7 @@ const As = {
         if (As.bought.lt(4)) {
             unlock_Ai_text = ["解锁 ", Ai(As.bought.floor().toNumber() + 5).formatted_name(), ", 并"];
         } else {
-            unlock_Ai_text = undefined;
+            unlock_Ai_text = null;
         }
         let mult_target: FormattedText;
         if (As.bought.lt(1)) {

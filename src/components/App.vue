@@ -1,20 +1,22 @@
 <script lang="ts" setup>
 import EndgameWindow from "@/components/EndgameWindow.vue";
 import Header from "@/components/Header.vue";
+import MessageManager from "@/components/message/MessageManager.vue";
 import { global_now, init_timer } from "@/components/misc/component-timer.ts";
 import { init_keyboard_press } from "@/components/misc/global-keyboard-press.ts";
 import { run_on_frame } from "@/components/misc/run-on-frame.ts";
 import TextFormatter from "@/components/objects/TextFormatter.vue";
+import OneTimeEvents from "@/components/OneTimeEvents.vue";
 import SideBar from "@/components/SideBar.vue";
 import ATab from "@/components/Tabs/ATab.vue";
 import AUpgradesTab from "@/components/Tabs/AUpgradesTab.vue";
 import CheatTab from "@/components/Tabs/CheatTab.vue";
 import SettingsTab from "@/components/Tabs/SettingsTab.vue";
-import TabUnlocker from "@/components/TabUnlocker.vue";
 import { TabId } from "@/core/main/defines.ts";
 
 import "@/assets/main.scss";
 import { gameLoop } from "@/core/main/game-loop.ts";
+import { active_message_indices, global_messages } from "@/core/main/global-messages.js";
 import { init } from "@/core/main/init.ts";
 import type { FormattedText } from "@/util/format.js";
 import { type Component, computed, type ComputedRef } from "vue";
@@ -68,7 +70,7 @@ let activeTab: ComputedRef<Component | null> = computed(() => {
 
 <template>
   <EndgameWindow/>
-  <TabUnlocker></TabUnlocker>
+  <OneTimeEvents/>
   <SideBar/>
   <div class="content">
     <div class="tab-container">
@@ -81,6 +83,7 @@ let activeTab: ComputedRef<Component | null> = computed(() => {
   <div class="auto-save-time">
     <TextFormatter :text="auto_save_time_text"/>
   </div>
+  <MessageManager :indices="active_message_indices" :messages="global_messages"/>
 </template>
 
 <style scoped>

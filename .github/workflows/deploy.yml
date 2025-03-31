@@ -7,6 +7,7 @@ on:
       - master
       - v1alpha
       - v1
+      - v2alpha
 
 jobs:
   build-and-deploy:
@@ -59,3 +60,11 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           destination_dir: 'v1'
+
+      - name: Deploy to GitHub Pages (v2alpha)
+        if: github.ref == 'refs/heads/v2alpha'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          destination_dir: 'v2alpha'

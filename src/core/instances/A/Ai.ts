@@ -248,7 +248,7 @@ const Ai = assignWithProperty(_Ai, {
             case BuyMode.BUY_MAX:
                 return ["购买最大 ", Ai.formatted_name()];
             default:
-                return undefined;
+                return null;
         }
     },
 });
