@@ -1,7 +1,10 @@
-import DC from "@/core/main/DC.js";
 import Ai from "@/core/instances/A/Ai.ts";
 import At from "@/core/instances/A/At.ts";
+import BU from "@/core/instances/B/BU.js";
 import { register } from "@/core/instances/instance-init.js";
+import Progress from "@/core/instances/Progress/Progress.js";
+import Records from "@/core/instances/Progress/Records.js";
+import DC from "@/core/main/DC.js";
 import { A_text, type FormattedText } from "@/util/format.ts";
 import type Decimal from "break_eternity.js";
 
@@ -11,13 +14,16 @@ const Ap = {
     },
     set amount(value: Decimal) {
         window.player.A.Ap = value;
+
+        Records.update_best_Ap(value);
     },
 
     spend(amount: Decimal): void {
-        Ap.amount = Ap.amount.sub(amount);
+        Ap.amount = Ap.amount.sub(amount).round();
     },
 
     amount_after_reset(): Decimal {
+        if (BU(0).bought) return DC.d1e10;
         return DC.d10;
     },
 
@@ -39,27 +45,14 @@ const Ap = {
     },
 
     amount_message(): FormattedText {
-        return [
-            "你有 ",
-            A_text(Ap.amount, 'large'),
-            " 个 ",
-            Ap.formatted_name(),
-            "."];
+        return ["你有 ", A_text(Ap.amount, 'large'), " 个 ", Ap.formatted_name(), "."];
     },
 
     amount_inc_message(): FormattedText {
         if (!At.unlocked) {
-            return [
-                "+",
-                Ap.generated_per_sign(),
-                "/签到",
-            ];
+            return ["+", Ap.generated_per_sign(), "/签到"];
         } else {
-            return [
-                "+",
-                Ap.generated_per_second(),
-                "/秒",
-            ];
+            return ["+", Ap.generated_per_second(), "/秒"];
         }
     },
 };

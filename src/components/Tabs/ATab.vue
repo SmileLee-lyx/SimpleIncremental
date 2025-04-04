@@ -28,17 +28,21 @@ import Atu from "@/core/instances/A/Atu.js";
     <TextFormatter :text="At.auto_sign_description()"/>
     <br>
     <UpgradeButton
+        :visible="A.sign_visible"
         :buy="A.manual_sign"
-        :visible="A.sign_visible">
+        :extra_classes="'A-button'"
+    >
       <template #text>
         <TextFormatter :text="A.sign_message()"/>
       </template>
     </UpgradeButton>
     <UpgradeButton
-        :buy="At.buy"
         :buyable="At.buyable"
         :has_tooltip="true"
-        :visible="At.visible">
+        :visible="At.visible"
+        :buy="At.buy"
+        :extra_classes="'A-button'"
+    >
       <template #text>
         <TextFormatter :text="At.buy_button_message()"/>
       </template>
@@ -47,10 +51,12 @@ import Atu from "@/core/instances/A/Atu.js";
       </template>
     </UpgradeButton>
     <UpgradeButton
-        :buy="As.buy"
         :buyable="As.buyable"
         :has_tooltip="true"
-        :visible="As.visible">
+        :visible="As.visible"
+        :buy="As.manual_buy"
+        :extra_classes="'A-button'"
+    >
       <template #text>
         <TextFormatter v-if="!is_shift_pressed" :text="As.buy_button_message()"/>
         <TextFormatter v-else :text="As.buy_button_shift_message()"/>
@@ -60,10 +66,11 @@ import Atu from "@/core/instances/A/Atu.js";
       </template>
     </UpgradeButton>
     <UpgradeButton
-        :buy="Atu.buy"
         :buyable="Atu.buyable"
         :has_tooltip="true"
-        :visible="Atu.visible">
+        :visible="Atu.visible"
+        :buy="Atu.manual_buy"
+        :extra_classes="'A-button'">
       <template #text>
         <TextFormatter v-if="!is_shift_pressed" :text="Atu.buy_button_message()"/>
         <TextFormatter v-else :text="Atu.buy_button_shift_message()"/>
@@ -83,11 +90,12 @@ import Atu from "@/core/instances/A/Atu.js";
       <TextFormatter :text="Ai(layer).amount_inc_message()" class="small2"/>
     </span>
     <PurchaseButton
+        :unlocked="Ai(layer).unlocked"
         :already_bought="Ai(layer).bought_mod_10"
-        :buy="Ai(layer).buy"
         :buyable_amount="Ai(layer).buyable_amount_to10"
         :has_tooltip="true"
-        :total_amount="10">
+        :total_amount="10"
+        :buy="Ai(layer).buy">
       <template #text>
         <span class="text-box small-text">
           <TextFormatter v-if="!is_shift_pressed" :text="Ai(layer).buy_button_message()"/>

@@ -1,14 +1,13 @@
-import DC from "@/core/main/DC.ts";
-import { BuyMode } from "@/core/main/defines.ts";
 import A from "@/core/instances/A/A.js";
 import Ai from "@/core/instances/A/Ai.js";
 import Ap from "@/core/instances/A/Ap.js";
 import Atu from "@/core/instances/A/Atu.ts";
 import { register } from "@/core/instances/instance-init.js";
-import { ExpLinearScaling, type Scaling } from "@/core/math/scaling.js";
+import DC from "@/core/main/DC.ts";
+import { BuyMode } from "@/core/main/settings.ts";
+import { ExpLinearScaling, ExpQuadScaling, type Scaling } from "@/core/math/scaling.js";
 import { A_text, br, fixed_width, type FormattedText, sub } from "@/util/format.ts";
 import Decimal from "break_eternity.js";
-import { range } from "lodash";
 
 const At = {
     get unlocked(): boolean {
@@ -51,7 +50,11 @@ const At = {
     // buy
 
     price_scaling(): Scaling {
-        return new ExpLinearScaling(10, 10, 1, false);
+        return new ExpQuadScaling(
+            new ExpLinearScaling(10, 10, 1, false),
+            { price: DC.dNm },
+            Infinity,
+        );
     },
 
     price(): Decimal {
@@ -64,7 +67,7 @@ const At = {
 
     unlocked_Ai(): boolean {
         if (!At.unlocked) return false;
-        return range(1, 9).some((layer) => Ai(layer).bought.gt(0));
+        return Ai(1).amount.gt(0);
     },
 
     buyable(): boolean {
@@ -140,7 +143,7 @@ const At = {
         if (!At.unlocked_Ai()) {
             return [
                 "购买 1 个 ", At.formatted_name(), ".", br(),
-                "需要至少一个 ", Ai.formatted_name(), " 以解锁.",
+                "需要至少一个 ", Ai(1).formatted_name(), " 以解锁.",
             ];
         }
 
@@ -148,12 +151,12 @@ const At = {
             case BuyMode.BUY_ONE:
                 return [
                     "购买 1 个 ", At.formatted_name(), ".", br(),
-                    "价格: ", A_text(At.price()), Ap.formatted_name(), ".",
+                    "价格: ", A_text(At.price()), " ", Ap.formatted_name(), ".",
                 ];
             case BuyMode.BUY_MAX:
                 return [
                     "购买至 ", At.buy_max_result(), " 个 ", At.formatted_name(), ".", br(),
-                    "价格: ", A_text(At.price()), Ap.formatted_name(), ".",
+                    "当前价格: ", A_text(At.price()), " ", Ap.formatted_name(), ".",
                 ];
             default:
                 return [];

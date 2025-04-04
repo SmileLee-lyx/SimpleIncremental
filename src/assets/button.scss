@@ -1,8 +1,8 @@
 .general-button {
-  border: 3px solid red;
+  position: relative;
+  border-width: 3px;
+  border-style: solid;
   border-radius: 8px;
-  background-color: #ccc;
-  color: #333;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease, border-color 0.3s ease;
@@ -11,36 +11,121 @@
   white-space: normal;
   vertical-align: middle;
 
-  &.disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-
-  &.fully-bought {
-    background-color: #4ce04c;
-    border-color: black;
-  }
-
-  &.buyable {
-    background-color: #a8f0a8;
-    border-color: green;
-  }
+  border-color: #000;
+  background-color: #fff;
+  color: #000;
 }
+
+// exactly one class among the following:
+// not-unlocked, not-buyable, buyable, fully-bought
 
 .upgrade-button {
   @extend .general-button;
 
-  position: relative;
   width: 150px;
   height: 100px;
+
+  &.disabled {
+    cursor: not-allowed;
+    color: #000;
+  }
+
+  &.not-unlocked {
+    border-color: #666;
+    background-color: #ccc;
+  }
+
+  &.not-buyable {
+    border-color: #f00;
+    background-color: #fff;
+  }
+
+  &.buyable {
+    border-color: #080;
+    background-color: #afa;
+  }
+
+  &.fully-bought {
+    border-color: #000;
+    background-color: #4c4;
+  }
+}
+
+.upgrade-button.A-button {
+  &.not-unlocked {
+    border-color: #aaa;
+    background-color: #aaa;
+  }
+
+  &.not-buyable {
+    border-color: #f00;
+    background-color: #bbb;
+  }
+
+  &.buyable {
+    border-color: #f00;
+    background-color: #fff;
+  }
+
+  &.fully-bought {
+    border-color: #f88;
+    background-color: #f88;
+  }
+}
+
+.upgrade-button.B-button {
+  &.not-unlocked {
+    border-color: #aaa;
+    background-color: #aaa;
+  }
+
+  &.not-buyable {
+    border-color: #00f;
+    background-color: #bbb;
+  }
+
+  &.buyable {
+    border-color: #00f;
+    background-color: #fff;
+  }
+
+  &.fully-bought {
+    border-color: #88f;
+    background-color: #88f;
+  }
 }
 
 .purchase-button {
   @extend .general-button;
 
-  position: relative;
   width: 200px;
   height: 40px;
+
+  &.disabled {
+    cursor: not-allowed;
+  }
+
+  &.not-unlocked {
+    border-color: #666;
+    background: #ccc;
+  }
+
+  &.not-buyable {
+    border-color: #f00;
+  }
+
+  &.buyable {
+    border-color: #080;
+  }
+
+  &.fully-bought {
+    border-color: #000;
+    background: #4c4;
+  }
+
+  --p1: 0%;
+  --p2: 0%;
+  background: linear-gradient(to right, #4c4 var(--p1), #9e9 var(--p1), #9e9 var(--p2), #fff var(--p2));
 }
 
 .select-button {

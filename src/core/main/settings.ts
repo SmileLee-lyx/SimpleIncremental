@@ -9,3 +9,15 @@ export enum AutoSaveSetting {
     EVERY_5_MIN,
     NEVER,
 }
+
+export enum AlertId {
+    HIDE_SIGN,
+    SHIFT,
+    B_UNLOCK,
+}
+
+export enum BuyMode {
+    BUY_ONE,
+    BUY_TEN,
+    BUY_MAX,
+}

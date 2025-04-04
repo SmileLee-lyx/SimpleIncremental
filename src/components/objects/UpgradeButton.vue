@@ -1,32 +1,59 @@
 <script lang="ts" setup>
+
 import { ref, type Ref } from "vue";
 
-const props = defineProps<{
-  visible?: () => boolean;
-  buyable?: () => boolean;
-  fully_bought?: () => boolean;
+const props = withDefaults(defineProps<{
+  visible?: boolean | (() => boolean);
+  unlocked?: boolean | (() => boolean);
+  buyable?: boolean | (() => boolean);
+  fully_bought?: boolean | (() => boolean);
   buy: () => void;
   has_tooltip?: boolean | (() => boolean);
-}>();
+  width?: string;
+  height?: string;
+  extra_classes?: string | string[];
+}>(), {
+  visible: true,
+  unlocked: true,
+  buyable: true,
+  fully_bought: false,
+  has_tooltip: false,
+});
 
 let mouseHover: Ref<boolean> = ref(false);
 
 function _visible(): boolean {
-  return props.visible === undefined || props.visible();
+  return typeof props.visible === 'boolean' ? props.visible : props.visible();
+}
+
+function _unlocked(): boolean {
+  return typeof props.unlocked === 'boolean' ? props.unlocked : props.unlocked();
 }
 
 function _buyable(): boolean {
-  return props.buyable === undefined || props.buyable();
+  return typeof props.buyable === 'boolean' ? props.buyable : props.buyable();
 }
 
 function _fully_bought(): boolean {
-  return props.fully_bought !== undefined && props.fully_bought();
+  return typeof props.fully_bought === 'boolean' ? props.fully_bought : props.fully_bought();
 }
 
 function _has_tooltip(): boolean {
-  return props.has_tooltip !== undefined && (
-      typeof props.has_tooltip === "boolean" ? props.has_tooltip :
-          props.has_tooltip());
+  return typeof props.has_tooltip === "boolean" ? props.has_tooltip : props.has_tooltip();
+}
+
+function state(): string {
+  if (!_unlocked()) return 'not-unlocked';
+  if (_fully_bought()) return 'fully-bought';
+  if (_buyable()) return 'buyable';
+  return 'not-buyable';
+}
+
+function style(): any {
+  return {
+    width: props.width,
+    height: props.height,
+  };
 }
 </script>
 
@@ -34,15 +61,14 @@ function _has_tooltip(): boolean {
   <span class="tooltip-container">
     <button
         v-show="_visible()"
-        :class="[{
-          'buyable': _buyable() && !_fully_bought(),
-          'fully-bought': _fully_bought(),
-        }, 'upgrade-button']"
-        :disabled="!_buyable() || _fully_bought()"
+        :class="['upgrade-button', state(), extra_classes]"
+        :disabled="state() !== 'buyable'"
+        :style="style()"
         v-bind="$attrs"
         @click="buy()"
         @mouseenter="mouseHover = true"
-        @mouseleave="mouseHover = false">
+        @mouseleave="mouseHover = false"
+    >
       <slot name="text"/>
       <span v-if="_has_tooltip() && mouseHover" class="tooltip-top">
         <slot name="tooltip"/>

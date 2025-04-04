@@ -3,6 +3,9 @@ type ModuleInitializer = { init: () => void };
 const modules: Record<string, ModuleInitializer> = {};
 
 export function register(name: string, module: { init: () => void }) {
+    if (name in modules) {
+        console.warn(`Module '${ name }' already registered`);
+    }
     modules[name] = module;
 }
 

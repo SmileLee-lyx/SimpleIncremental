@@ -1,29 +1,61 @@
-import Decimal from "break_eternity.js";
+import { DecimalSerializer } from "@/save/Decimal-serializer.js";
 
-Decimal.prototype.toJSON = undefined as any;
+interface Serializer {
+    init(): void;
 
-class DecimalSerializer {
-    static replacer(_: any, value: any) {
-        if (value instanceof Decimal) {
-            return { __type: 'Decimal', value: value.toString() };
+    replacer: (that: any, value: any) => any;
+    reviver: (that: any, value: any) => any;
+}
+
+class CombinedSerializer implements Serializer {
+    combined: Serializer[];
+
+    constructor(combined: Serializer[]) {
+        this.combined = [];
+        for (let s of combined) {
+            if (s instanceof CombinedSerializer) {
+                this.combined.push(...s.combined);
+            } else {
+                this.combined.push(s);
+            }
+        }
+    }
+
+    init(): void {
+        for (let s of this.combined) {
+            s.init();
+        }
+    }
+
+    replacer(that: any, value: any) {
+        for (let s of this.combined) {
+            value = s.replacer(that, value);
         }
         return value;
     }
 
-    static reviver(_: any, value: any) {
-        if (value !== null && typeof value === 'object' && value.__type === 'Decimal') {
-            return new Decimal(value.value);
+    reviver(that: any, value: any) {
+        for (let s of this.combined) {
+            value = s.reviver(that, value);
         }
         return value;
     }
 }
 
-export function serialize(data: any): string {
-    return Buffer.from(JSON.stringify(data, DecimalSerializer.replacer)).toString('base64');
+export let GLOBAL_SERIALIZER: Serializer = DecimalSerializer;
+
+export function register_serializer(s: Serializer) {
+    GLOBAL_SERIALIZER = new CombinedSerializer([GLOBAL_SERIALIZER, s]);
 }
 
-export function deserialize(data: string): any {
-    return JSON.parse(Buffer.from(data, 'base64').toString('utf-8'), DecimalSerializer.reviver);
+export function serialize(data: any, s: Serializer = GLOBAL_SERIALIZER): string {
+    s.init();
+    return Buffer.from(JSON.stringify(data, s.replacer)).toString('base64');
+}
+
+export function deserialize(data: string, s: Serializer = GLOBAL_SERIALIZER): any {
+    s.init();
+    return JSON.parse(Buffer.from(data, 'base64').toString('utf-8'), s.reviver);
 }
 
 declare global {

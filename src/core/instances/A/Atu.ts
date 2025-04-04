@@ -1,9 +1,10 @@
-import DC from "@/core/main/DC.ts";
 import Ai from "@/core/instances/A/Ai.ts";
 import Ap from "@/core/instances/A/Ap.ts";
 import As from "@/core/instances/A/As.ts";
 import At from "@/core/instances/A/At.js";
+import BU from "@/core/instances/B/BU.js";
 import { register } from "@/core/instances/instance-init.js";
+import DC from "@/core/main/DC.ts";
 import { A_text, br, type FormattedText, sub } from "@/util/format.ts";
 import Decimal from "break_eternity.js";
 
@@ -18,6 +19,7 @@ const Atu = {
     // production
 
     At_effect_per_Atu(): Decimal {
+        if (BU(6).bought) return DC.d1_04;
         return DC.d1_02;
     },
 
@@ -40,6 +42,10 @@ const Atu = {
         return Ai(layer).amount.gte(price);
     },
 
+    manual_buy() {
+        Atu.buy();
+    },
+
     buy() {
         if (!Atu.buyable()) return;
         Atu.run_reset();
@@ -52,12 +58,12 @@ const Atu = {
      * All Atu reset eventually call this function.
      */
     run_reset() {
-        Ap.amount = Ap.amount_after_reset();
-        for (let layer = 1; layer <= 8; layer++) {
-            Ai(layer).amount = Ai(layer).bought = DC.d0;
-        }
-        At.bought = DC.d0;
-        As.bought = DC.d0;
+        Atu.run_reset_impl();
+    },
+
+    run_reset_impl() {
+        As.run_reset_impl();
+        As.bought = As.amount_after_reset();
     },
 
     // formatted text

@@ -1,3 +1,4 @@
+import DC from "@/core/main/DC.js";
 import Decimal, { type DecimalSource } from "break_eternity.js";
 
 export interface Scaling {
@@ -5,7 +6,7 @@ export interface Scaling {
     price: (bought: DecimalSource) => Decimal;
 
     // 购买总价
-    price_amount: (bought: DecimalSource, count: DecimalSource) => Decimal;
+    price_amount: (bought: DecimalSource, new_bought: DecimalSource) => Decimal;
 
     // 最多能购买的数量
     buy_max: (bought: DecimalSource, currency: DecimalSource) => Decimal;
@@ -96,10 +97,85 @@ export class ExpLinearScaling implements Scaling {
     }
 }
 
-declare global {
-    interface Window {
-        LinearScaling: typeof ExpLinearScaling;
+type ThresholdSpecify = DecimalSource | { price: DecimalSource } | { amount: DecimalSource };
+
+export class ExpQuadScaling implements Scaling {
+    base: ExpLinearScaling;
+    threshold_price: Decimal;
+    raise: Decimal;
+    // force ignore low
+
+    threshold_amount: Decimal;
+
+    constructor(base: ExpLinearScaling, threshold: ThresholdSpecify, raise: DecimalSource) {
+        this.base = base;
+        this.raise = new Decimal(raise);
+
+        if (typeof threshold === 'object' && 'price' in threshold) {
+            this.threshold_price = new Decimal(threshold.price);
+            this.threshold_amount = this.threshold_price.div(this.base.start).log(this.base.raise).floor()
+                .times(this.base.raise_amount);
+        } else if (typeof threshold === 'object' && 'amount' in threshold) {
+            this.threshold_amount = new Decimal(threshold.amount);
+            this.threshold_price = this.base.price(this.threshold_amount);
+        } else {
+            this.threshold_price = new Decimal(threshold);
+            this.threshold_amount = this.threshold_price.div(this.base.start).log(this.base.raise).floor()
+                .times(this.base.raise_amount);
+        }
+    }
+
+    public price(bought: DecimalSource): Decimal {
+        bought = new Decimal(bought);
+
+        if (bought.lt(this.threshold_amount)) {
+            return this.base.price(bought);
+        }
+
+        return this.base.price(bought).mul(
+            this.raise.pow(
+                bought.sub(this.threshold_amount).div(this.base.raise_amount).floor().sqr(),
+            ),
+        );
+    }
+
+    public buy_max(bought: DecimalSource, currency: DecimalSource): Decimal {
+        currency = new Decimal(currency);
+        if (currency.lt(this.threshold_price)) {
+            return this.base.buy_max(bought, currency);
+        }
+
+        // log currency = log start + log base.raise * t + log raise * (t - threshold_amount)^2
+
+        const S = this.base.raise.log(10)
+            .sub(this.raise.log(10).mul(2).mul(this.threshold_amount.div(this.base.raise_amount)));
+        const T = this.base.start.log(10)
+            .add(this.raise.log(10).mul(this.threshold_amount.div(this.base.raise_amount).sqr()))
+            .sub(currency.log(10));
+        let result = (S.sqr().sub(T.mul(4))).sqrt().sub(S).div(2).floor();
+
+        let price = this.price(result.mul(this.base.raise_amount));
+        return result.mul(this.base.raise_amount).add(currency.div(price).floor().min(10));
+    }
+
+    public price_amount(bought: DecimalSource, new_bought: DecimalSource): Decimal {
+        new_bought = new Decimal(new_bought);
+
+        if (new_bought.lte(this.threshold_amount)) return this.base.price_amount(bought, new_bought);
+
+        let new_bought_mod_10: Decimal = new_bought.mod(10).floor();
+        if (new_bought_mod_10.eq(0)) new_bought_mod_10 = DC.d10;
+
+        return this.price(new_bought.sub(1)).mul(new_bought_mod_10);
     }
 }
 
-window.LinearScaling = ExpLinearScaling;
+declare global {
+    interface Window {
+        ExpLinearScaling: typeof ExpLinearScaling;
+        ExpQuadScaling: typeof ExpQuadScaling;
+    }
+}
+
+window.ExpLinearScaling = ExpLinearScaling;
+window.ExpQuadScaling = ExpQuadScaling;

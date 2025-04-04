@@ -1,5 +1,9 @@
 <script lang="ts" setup>
+import TextFormatter from "@/components/objects/TextFormatter.vue";
+import A from "@/core/instances/A/A.js";
+import B from "@/core/instances/B/B.js";
 import { type TabConfig, type TabGroupConfig, TabGroupId, TabId } from "@/core/main/defines.ts";
+import { A_text, B_text, type FormattedText, small } from "@/util/format.js";
 import { computed, type ComputedRef, ref, type Ref } from "vue";
 
 let game = window.game;
@@ -7,10 +11,10 @@ let player = window.player;
 
 type SideBarConfig = {
   groupId: TabGroupId;
-  groupName: string;
+  groupName: FormattedText;
   tabs: {
     tabId: TabId,
-    tabName: string;
+    tabName: FormattedText;
   }[]
 }[]
 
@@ -41,13 +45,37 @@ function makeConfig(tabConfig: Record<TabId, TabConfig>, tabGroupConfig: Record<
 }
 
 let tabs: Record<TabId, TabConfig> = {
+  [TabId.AUTOMATION]: {
+    sideBarName: "自动化",
+    groupId: TabGroupId.AUTOMATION,
+  },
   [TabId.A]: {
-    sideBarName: "A",
+    sideBarName: A.formatted_name(),
     groupId: TabGroupId.A,
   },
   [TabId.A_UPGRADES]: {
-    sideBarName: "A升级",
+    sideBarName: small([A.formatted_name(), " ", A_text("升级")]),
     groupId: TabGroupId.A,
+  },
+  [TabId.B]: {
+    sideBarName: B.formatted_name(),
+    groupId: TabGroupId.B,
+  },
+  [TabId.B_UPGRADES]: {
+    sideBarName: small([B.formatted_name(), " ", B_text("升级")]),
+    groupId: TabGroupId.B,
+  },
+  [TabId.B_QOL]: {
+    sideBarName: small([B.formatted_name(), " ", B_text("QOL")]),
+    groupId: TabGroupId.B,
+  },
+  [TabId.B_CHALLENGES]: {
+    sideBarName: small([B.formatted_name(), " ", B_text("挑战")]),
+    groupId: TabGroupId.B,
+  },
+  [TabId.ACHIEVEMENTS]: {
+    sideBarName: "成就",
+    groupId: TabGroupId.ACHIEVEMENTS,
   },
   [TabId.SETTINGS]: {
     sideBarName: "设置",
@@ -60,8 +88,17 @@ let tabs: Record<TabId, TabConfig> = {
 };
 
 let tabGroups: Record<TabGroupId, TabGroupConfig> = {
+  [TabGroupId.AUTOMATION]: {
+    sideBarName: "自动化",
+  },
   [TabGroupId.A]: {
-    sideBarName: "A",
+    sideBarName: A.formatted_name(),
+  },
+  [TabGroupId.B]: {
+    sideBarName: B.formatted_name(),
+  },
+  [TabGroupId.ACHIEVEMENTS]: {
+    sideBarName: "成就",
   },
   [TabGroupId.SETTINGS]: {
     sideBarName: "设置",
@@ -163,7 +200,9 @@ function mouseLeaveTab(tabId: TabId) {
           @mouseenter="mouseEnterGroup(group.groupId)"
           @mouseleave="mouseLeaveGroup(group.groupId)"
       >
-        <span class="sidebar-button-text">{{ group.groupName }}</span>
+        <span class="sidebar-button-text">
+          <TextFormatter :text="group.groupName"/>
+        </span>
         <span v-if="tabs[game.current_tab].groupId == group.groupId" class="chosen-button-left"></span>
       </button>
       <div v-if="group.tabs.some((tab) => game.alert_tabs.has(tab.tabId))" class="sidebar-alert"/>
@@ -179,7 +218,9 @@ function mouseLeaveTab(tabId: TabId) {
                 @mouseenter="mouseEnterTab(tab.tabId)"
                 @mouseleave="mouseLeaveTab(tab.tabId)"
             >
-              <span class="sidebar-sub-menu-button-text">{{ tab.tabName }}</span>
+              <span class="sidebar-sub-menu-button-text">
+                <TextFormatter :text="tab.tabName"/>
+              </span>
               <span v-if="game.current_tab == tab.tabId" class="chosen-button-top"></span>
             </button>
             <div v-if="game.alert_tabs.has(tab.tabId)" class="sidebar-alert"/>

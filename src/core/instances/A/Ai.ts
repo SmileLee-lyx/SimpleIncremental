@@ -1,17 +1,18 @@
-import DC from "@/core/main/DC.ts";
-import { BuyMode } from "@/core/main/defines.ts";
 import Ap from "@/core/instances/A/Ap.ts";
 import As from "@/core/instances/A/As.ts";
 import At from "@/core/instances/A/At.ts";
+import BU from "@/core/instances/B/BU.js";
 import { register } from "@/core/instances/instance-init.js";
-import { ExpLinearScaling, type Scaling } from "@/core/math/scaling.ts";
+import DC from "@/core/main/DC.ts";
+import { BuyMode } from "@/core/main/settings.ts";
+import { ExpLinearScaling, ExpQuadScaling, type Scaling } from "@/core/math/scaling.ts";
 import { A_text, br, type FormattedText, sub } from "@/util/format.ts";
 import { assignWithProperty } from "@/util/merge.ts";
 import Decimal from "break_eternity.js";
 
 
 function _Ai(layer: number) {
-    if (layer <= 0 || layer > 8) throw RangeError("Invalid layer");
+    if (layer <= 0 || layer > 8 || !Number.isInteger(layer)) throw new RangeError("invalid layer");
 
     return {
         get amount(): Decimal {
@@ -34,7 +35,7 @@ function _Ai(layer: number) {
         },
 
         mult_total(): Decimal {
-            return Ai(layer).mult_buy10_total().mul(As.mult_for_Ai_total(layer));
+            return Ai(layer).mult_buy10_total().mul(As.mult_for_Ai_total(layer)).mul(BU.mult_for_Ai_total(layer));
         },
 
         production_per_sign(): Decimal {
@@ -64,26 +65,17 @@ function _Ai(layer: number) {
         // buy
 
         price_scaling(): Scaling {
-            switch (layer) {
-                case 1:
-                    return new ExpLinearScaling(10, 1e2, 10);
-                case 2:
-                    return new ExpLinearScaling(100, 1e3, 10);
-                case 3:
-                    return new ExpLinearScaling(1e3, 1e4, 10);
-                case 4:
-                    return new ExpLinearScaling(1e5, 1e6, 10);
-                case 5:
-                    return new ExpLinearScaling(1e7, 1e8, 10);
-                case 6:
-                    return new ExpLinearScaling(1e10, 1e10, 10);
-                case 7:
-                    return new ExpLinearScaling(1e15, 1e15, 10);
-                case 8:
-                    return new ExpLinearScaling(1e21, 1e20, 10);
-                default:
-                    return new ExpLinearScaling(Infinity, Infinity, 10);
-            }
+            const linearScaling: ExpLinearScaling[] = [
+                new ExpLinearScaling(10, 1e2, 10),
+                new ExpLinearScaling(100, 1e3, 10),
+                new ExpLinearScaling(1e3, 1e4, 10),
+                new ExpLinearScaling(1e5, 1e6, 10),
+                new ExpLinearScaling(1e7, 1e8, 10),
+                new ExpLinearScaling(1e10, 1e10, 10),
+                new ExpLinearScaling(1e15, 1e15, 10),
+                new ExpLinearScaling(1e21, 1e20, 10),
+            ];
+            return new ExpQuadScaling(linearScaling[layer - 1], { price: DC.dNm }, Infinity);
         },
 
         price(): Decimal {
@@ -219,6 +211,7 @@ function _Ai(layer: number) {
 
 const Ai = assignWithProperty(_Ai, {
     mult_per_buy10(): Decimal {
+        if (BU(5).bought) return DC.d2_5;
         return DC.d2;
     },
 

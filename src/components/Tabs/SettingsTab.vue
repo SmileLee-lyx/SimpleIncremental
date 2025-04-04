@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import SaveLoadPad from "@/components/objects/SaveLoadPad.vue";
 import SelectButton from "@/components/objects/SelectButton.vue";
+import A from "@/core/instances/A/A.js";
 import { fullReset } from "@/core/main/full-reset.js";
-import { add_global_message, manual_close_message } from "@/core/main/global-messages.js";
+import { add_global_message, add_header_message, manual_close_message } from "@/core/main/global-messages.js";
 import { SignSetting } from "@/core/main/settings.ts";
 import {
   create_empty_manual_save,
@@ -36,13 +37,17 @@ function show_reset_confirm_text() {
   });
 }
 
-function show_reset_confirm(text: string, index: number): boolean {
+function show_reset_confirm(text: string, index: number) {
   if (text.trim() === RESET_CONFIRM_TEXT) {
     add_global_message({
       type: 'confirm',
       message_text: "确定要重置吗?",
       done: () => confirm_reset(index),
     });
+  } else if (text.trim() === 'cheat') {
+    game.show_cheat = true;
+    add_header_message("已解锁作弊.");
+    return false;
   } else {
     add_global_message({
       type: 'alert',
@@ -62,7 +67,6 @@ let sign_settings: SignSetting[] = Object.values(SignSetting).filter(x => typeof
 
 let sign_settings_configs = {
   [SignSetting.DEFAULT]: { description: "默认", select: "默认" },
-  [SignSetting.WHEN_SLOW]: { description: "慢速时开启", select: "慢速时开启" },
   [SignSetting.ALWAYS]: { description: "开启", select: "开启" },
   [SignSetting.NEVER]: { description: "关闭", select: "关闭" },
 };
@@ -120,16 +124,33 @@ function save_load_action(mode: 'save' | 'load' | 'delete', target: string | nul
 
 function confirm_save(target: string) {
   manual_save(target);
+  add_header_message("存档成功.");
   update_save_slots();
 }
 
 function confirm_load(target: string) {
-  manual_load(target);
-  update_save_slots();
+  const result = manual_load(target);
+  if (result.success) {
+    add_header_message("读档成功.");
+    update_save_slots();
+
+    if (result.warnings && result.warnings.includes('version-0')) {
+      add_global_message({
+        type: 'alert',
+        message_text: [
+          "你正在导入旧版本存档. 此版本的存档不能正确记录游戏时长.", br(),
+          "此外, 由于引入了一些新机制, 存档内部分 ", A.formatted_name(), " 阶段的内容可能被重置.",
+        ],
+      });
+    }
+  } else {
+    add_header_message("读档失败!");
+  }
 }
 
 function confirm_delete(target: string) {
   manual_delete(target);
+  add_header_message("删除成功.");
   update_save_slots();
 }
 
@@ -168,7 +189,7 @@ function import_save() {
     type: 'input_box',
     message_text: "请输入导出的存档",
     done: confirm_import,
-  })
+  });
 }
 
 function confirm_import(data: string) {
@@ -179,17 +200,26 @@ function confirm_import(data: string) {
     });
     return;
   }
-  let result = load_from_data(deserialize(data.substring(9, data.length - 7)), (e) => {
-    add_global_message({
-      type: 'alert',
-      message_text: "存档读取失败!",
-    });
-    console.log(e);
-  });
-  if (result) {
+  let result = load_from_data(deserialize(data.substring(9, data.length - 7)));
+  if (result.success) {
     add_global_message({
       type: 'alert',
       message_text: "存档导入成功!",
+    });
+
+    if (result.warnings && result.warnings.includes('version-0')) {
+      add_global_message({
+        type: 'alert',
+        message_text: [
+          "你正在导入旧版本存档. 此版本的存档不能正确记录游戏时长.", br(),
+          "此外, 由于引入了一些新机制, 存档内部分 ", A.formatted_name(), " 阶段的内容可能被重置.",
+        ],
+      });
+    }
+  } else {
+    add_global_message({
+      type: 'alert',
+      message_text: "存档读取失败!",
     });
   }
 }

@@ -1,20 +1,31 @@
 <script lang="ts" setup>
 import { computed, type ComputedRef, ref, type Ref } from "vue";
 
-const props = defineProps<{
-  visible?: () => boolean;
+const props = withDefaults(defineProps<{
+  visible?: boolean | (() => boolean);
+  unlocked?: boolean | (() => boolean);
   total_amount: number | (() => number);
   already_bought: () => number;
   buyable_amount: () => number;
-  fully_bought?: () => boolean;
+  fully_bought?: boolean | (() => boolean);
   buy: () => void;
   has_tooltip?: boolean | (() => boolean);
-}>();
+  extra_classes?: string | string[]
+}>(), {
+  visible: true,
+  unlocked: true,
+  fully_bought: false,
+  has_tooltip: false,
+});
 
 let mouseHover: Ref<boolean> = ref(false);
 
 function _visible(): boolean {
-  return props.visible === undefined || props.visible();
+  return typeof props.visible === 'boolean' ? props.visible : props.visible();
+}
+
+function _unlocked(): boolean {
+  return typeof props.unlocked === 'boolean' ? props.unlocked : props.unlocked();
 }
 
 function _buyable(): boolean {
@@ -22,13 +33,18 @@ function _buyable(): boolean {
 }
 
 function _fully_bought(): boolean {
-  return props.fully_bought !== undefined && props.fully_bought();
+  return typeof props.fully_bought === 'boolean' ? props.fully_bought : props.fully_bought();
+}
+
+function state(): string {
+  if (!_unlocked()) return 'not-unlocked';
+  if (_fully_bought()) return 'fully-bought';
+  if (_buyable()) return 'buyable';
+  return 'not-buyable';
 }
 
 function _has_tooltip(): boolean {
-  return props.has_tooltip !== undefined && (
-      typeof props.has_tooltip === "boolean" ? props.has_tooltip :
-          props.has_tooltip());
+  return typeof props.has_tooltip === "boolean" ? props.has_tooltip : props.has_tooltip();
 }
 
 function _total_amount(): number {
@@ -39,7 +55,8 @@ let background: ComputedRef<any> = computed(() => {
   let green_percentage = Math.floor(props.already_bought() / _total_amount() * 100);
   let lightgreen_percentage = Math.floor((props.already_bought() + props.buyable_amount()) / _total_amount() * 100);
   return {
-    background: `linear-gradient(to right, #4c4 ${ green_percentage }%, lightgreen ${ green_percentage }%, lightgreen ${ lightgreen_percentage }%, white ${ lightgreen_percentage }%)`,
+    ["--p1"]: `${ green_percentage }%`,
+    ["--p2"]: `${ lightgreen_percentage }%`,
   };
 });
 </script>
@@ -48,10 +65,7 @@ let background: ComputedRef<any> = computed(() => {
   <span class="tooltip-container">
     <button
         v-show="_visible()"
-        :class="[{
-          'buyable': _buyable(),
-          'fully-bought': _fully_bought(),
-        }, 'purchase-button']"
+        :class="['purchase-button', state(), extra_classes]"
         :disabled="!_buyable() || _fully_bought()"
         :style="background"
         v-bind="$attrs"

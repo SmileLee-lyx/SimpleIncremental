@@ -1,40 +1,44 @@
 import DC from "@/core/main/DC.ts";
-import { AutoSaveSetting, SignSetting } from "@/core/main/settings.ts";
+import { AlertId, AutoSaveSetting, BuyMode, SignSetting } from "@/core/main/settings.ts";
+import type { FormattedText } from "@/util/format.js";
 import Decimal from "break_eternity.js";
 import { cloneDeep } from "lodash";
 import { reactive } from "vue";
 
 export enum TabGroupId {
-    A,
+    AUTOMATION = 0,
+
+    A = 1000,
+    B,
+
+    ACHIEVEMENTS = 2000,
     SETTINGS,
     CHEAT,
 }
 
 export enum TabId {
-    A,
+    AUTOMATION = 0,
+
+    A = 1000,
     A_UPGRADES,
+    B,
+    B_UPGRADES,
+    B_QOL,
+    B_CHALLENGES,
+
+    ACHIEVEMENTS = 2000,
     SETTINGS,
     CHEAT,
+
 }
 
 export interface TabGroupConfig {
-    sideBarName: string;
+    sideBarName: FormattedText;
 }
 
 export interface TabConfig {
-    sideBarName: string;
+    sideBarName: FormattedText;
     groupId: TabGroupId;
-}
-
-export enum AlertId {
-    HIDE_SIGN,
-    SHIFT,
-}
-
-export enum BuyMode {
-    BUY_ONE,
-    BUY_TEN,
-    BUY_MAX,
 }
 
 export interface Game {
@@ -65,17 +69,40 @@ export interface Player {
         Ai_automation: { unlocked: boolean, enabled: boolean, buy_mode: BuyMode }[];
         At_automation: { unlocked: boolean, enabled: boolean, buy_mode: BuyMode };
     };
+    B: {
+        unlocked: boolean;
+        B_count: Decimal;
+        Bp: Decimal;
+        Bq: Decimal;
+        BU_bits: number[];
+        BU_qol_bits: number[];
+        BC_completions: (Decimal | null)[];
+    };
     settings: {
         sign_setting: SignSetting;
         auto_save_setting: AutoSaveSetting;
     };
+    stats: {
+        Game: {
+            real_time: number;
+            game_time: Decimal;
+
+            best_Ap: Decimal;
+            best_Bp: Decimal;
+        }
+        this_B: {
+            real_time: number;
+            game_time: Decimal;
+
+            best_Ap: Decimal;
+        }
+    };
     progress: {
+        meta: string;
         unlocked_tabs: TabId[];
         ignored_alerts: AlertId[];
-        start_time: number;
-        end_time: number;
+        used_cheat: boolean;
         endgame: boolean;
-        endgame_continue: boolean;
     };
 }
 
@@ -117,17 +144,40 @@ export const defaultPlayer: Readonly<Player> = {
         ],
         At_automation: { unlocked: false, enabled: false, buy_mode: BuyMode.BUY_ONE },
     },
+    B: {
+        unlocked: false,
+        B_count: DC.d0,
+        Bp: DC.d0,
+        Bq: DC.d0,
+        BU_bits: [0, 0],
+        BU_qol_bits: [0, 0],
+        BC_completions: [null, null, null, null, null, null, null, null],
+    },
     settings: {
         sign_setting: SignSetting.DEFAULT,
         auto_save_setting: AutoSaveSetting.EVERY_30_SEC,
     },
+    stats: {
+        Game: {
+            real_time: 0,
+            game_time: DC.d0,
+
+            best_Ap: DC.d0,
+            best_Bp: DC.d0,
+        },
+        this_B: {
+            real_time: 0,
+            game_time: DC.d0,
+
+            best_Ap: DC.d0,
+        }
+    },
     progress: {
-        unlocked_tabs: [TabId.A, TabId.SETTINGS],
+        meta: '',
+        unlocked_tabs: [TabId.A, TabId.SETTINGS, TabId.ACHIEVEMENTS],
         ignored_alerts: [],
-        start_time: -Infinity,
-        end_time: Infinity,
+        used_cheat: false,
         endgame: false,
-        endgame_continue: false,
     },
 };
 
@@ -151,7 +201,6 @@ window.defaultPlayer = defaultPlayer;
 
 export function init_player() {
     window.player = reactive(cloneDeep(defaultPlayer));
-    window.player.progress.start_time = performance.now();
 }
 
 export function init_game() {

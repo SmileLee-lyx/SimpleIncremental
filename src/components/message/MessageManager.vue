@@ -1,13 +1,20 @@
 <script lang="ts" setup>
 import AlertBox from "@/components/message/AlertBox.vue";
 import ConfirmBox from "@/components/message/ConfirmBox.vue";
+import HeaderBox from "@/components/message/HeaderBox.vue";
 import InputBox from "@/components/message/InputBox.vue";
-import type { AlertData, ConfirmData, InputData, MessageData } from "@/core/main/global-messages.js";
+import { run_on_frame } from "@/components/misc/run-on-frame.js";
+import type { AlertData, ConfirmData, HeaderMessageData, InputData, MessageData } from "@/core/main/global-messages.js";
+import { computed } from "vue";
 
 const props = defineProps<{
   messages: MessageData[];
   indices: Set<number>;
+  headers: HeaderMessageData[];
+  clear_header_timeout: () => void;
 }>();
+
+run_on_frame(props.clear_header_timeout);
 
 function alert_done(index: number) {
   const message = props.messages[index] as AlertData;
@@ -48,6 +55,16 @@ function input_close(index: number) {
   }
   props.indices.delete(index);
 }
+
+const max_index = computed(() => {
+  let result = 0;
+  for (let index of props.indices) {
+    if (index > result) {
+      result = index;
+    }
+  }
+  return result;
+});
 </script>
 
 <template>
@@ -65,6 +82,10 @@ function input_close(index: number) {
         @close="() => input_close(index)" @done="(text) => input_done(index, text)"
     />
   </template>
+  <div v-if="indices.size > 0" :style="{zIndex: max_index * 2 + 101}" class="modal"/>
+  <transition-group name="message-header-slide">
+    <HeaderBox v-for="header in headers" :key="header.start_time" :data="header.message_text"/>
+  </transition-group>
 </template>
 
 <style scoped>

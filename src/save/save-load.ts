@@ -3,7 +3,7 @@ import { deserialize, serialize } from "@/save/serializer.js";
 import { assign } from "lodash";
 import { toRaw } from "vue";
 
-const VERSION = 0;
+const VERSION = 1;
 
 export function deleteRaw(slot: string): void {
     localStorage.removeItem(window.location.pathname + slot);
@@ -73,22 +73,25 @@ export function manual_save(name: string) {
     }
 }
 
-export function load_from_data(data: any, onerror?: (e: any) => void): boolean {
-    try {
-        assign(window.player, migration(data));
-        return true;
-    } catch (e) {
-        if (onerror !== undefined) onerror(e);
-        return false;
-    }
+type LoadResult = {
+    success: boolean;
+    errors?: string[];
+    warnings?: string[];
 }
 
-export function load_current_auto_save(onerror?: (e: any) => void) {
-    load_from_data(loadRaw(auto_save_name()), onerror);
+export function load_from_data(data: any): LoadResult {
+    const result = migration(data);
+    if (!result.success) return { success: false, errors: result.errors };
+    assign(window.player, result.result);
+    return { success: true, warnings: result.warnings };
 }
 
-export function manual_load(name: string, onerror?: (e: any) => void): boolean {
-    return load_from_data(loadRaw(name), onerror);
+export function load_current_auto_save(): LoadResult {
+    return load_from_data(loadRaw(auto_save_name()));
+}
+
+export function manual_load(name: string): LoadResult {
+    return load_from_data(loadRaw(name));
 }
 
 export function manual_delete(name: string): boolean {

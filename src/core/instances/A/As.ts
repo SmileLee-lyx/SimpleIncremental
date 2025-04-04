@@ -1,9 +1,10 @@
-import DC from "@/core/main/DC.ts";
 import Ai from "@/core/instances/A/Ai.ts";
 import Ap from "@/core/instances/A/Ap.ts";
 import At from "@/core/instances/A/At.js";
 import Atu from "@/core/instances/A/Atu.js";
+import BU from "@/core/instances/B/BU.js";
 import { register } from "@/core/instances/instance-init.js";
+import DC from "@/core/main/DC.ts";
 import { A_text, br, type FormattedText, sub } from "@/util/format.ts";
 import Decimal from "break_eternity.js";
 
@@ -15,9 +16,14 @@ const As = {
         window.player.A.As = amount;
     },
 
+    amount_after_reset(): Decimal {
+        return DC.d0;
+    },
+
     // production
 
     mult_for_Ai_per_As(): Decimal {
+        if (BU(4).bought) return DC.d2_5;
         return DC.d2;
     },
     mult_for_Ai_total(layer: number): Decimal {
@@ -46,6 +52,10 @@ const As = {
         return Ai(layer).amount.gte(price);
     },
 
+    manual_buy() {
+        As.buy();
+    },
+
     buy() {
         if (!As.buyable()) return;
         As.run_reset();
@@ -54,8 +64,14 @@ const As = {
 
     /**
      * All As reset eventually call As function.
+     *
+     * may contain actions not needed in reset for Atu, B and beyond.
      */
     run_reset() {
+        As.run_reset_impl();
+    },
+
+    run_reset_impl() {
         Ap.amount = Ap.amount_after_reset();
         for (let layer = 1; layer <= 8; layer++) {
             Ai(layer).amount = Ai(layer).bought = DC.d0;

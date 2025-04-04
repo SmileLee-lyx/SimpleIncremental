@@ -41,3 +41,30 @@ export function manual_show_message(index: number) {
 export function manual_close_message(index: number) {
     active_message_indices.delete(index);
 }
+
+export interface HeaderMessageData {
+    start_time: number;
+    message_text: FormattedText;
+}
+
+export const HEADER_MESSAGE_TIMEOUT = 3000;
+export let headers: HeaderMessageData[] = reactive([]);
+
+export function add_header_message(data: FormattedText) {
+    headers.push({
+        start_time: performance.now(),
+        message_text: data,
+    });
+}
+
+export function remove_header_message_timeout() {
+    let index = 0;
+    while (index < headers.length) {
+        if (headers[index].start_time < performance.now() - HEADER_MESSAGE_TIMEOUT) {
+            index++;
+        } else {
+            break;
+        }
+    }
+    headers.splice(0, index);
+}

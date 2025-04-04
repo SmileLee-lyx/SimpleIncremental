@@ -14,7 +14,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="message-window">
+  <div :style="{ zIndex: index * 2 + 102 }" class="message-window">
     <TextFormatter :text="data.message_text"/>
     <div class="text-box">
       <button class="message-button" @click="$emit('done')">确认</button>

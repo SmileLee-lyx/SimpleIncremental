@@ -1,10 +1,17 @@
 <script lang="ts" setup>
 import { run_on_frame } from "@/components/misc/run-on-frame.ts";
+import Ai from "@/core/instances/A/Ai.js";
 import Ap from "@/core/instances/A/Ap.js";
 import At from "@/core/instances/A/At.js";
-import { AlertId, TabId } from "@/core/main/defines.ts";
+import B from "@/core/instances/B/B.js";
+import Bp from "@/core/instances/B/Bp.js";
+import Progress from "@/core/instances/Progress/Progress.js";
+import DC from "@/core/main/DC.js";
+import { TabId } from "@/core/main/defines.ts";
 import { add_global_message } from "@/core/main/global-messages.js";
-import { ref, type Ref, watchEffect } from "vue";
+import { AlertId } from "@/core/main/settings.js";
+import { br } from "@/util/format.js";
+import { ref, type Ref, watch, watchEffect } from "vue";
 
 function alert_ignored(id: AlertId): boolean {
   return window.player.progress.ignored_alerts.includes(id);
@@ -14,28 +21,25 @@ function ignore_alert(id: AlertId) {
   window.player.progress.ignored_alerts.push(id);
 }
 
-function unlocked(tab: TabId) {
-  return window.player.progress.unlocked_tabs.includes(tab);
-}
-
-function unlock(tabId: TabId): boolean {
-  if (!unlocked(tabId)) {
-    window.player.progress.unlocked_tabs.push(tabId);
-    return true;
-  }
-  return false;
-}
-
 run_on_frame(() => {
-  if (!unlocked(TabId.A_UPGRADES) && Ap.amount.gte("1e2")) {
-    unlock(TabId.A_UPGRADES);
+  if (!Progress.tab_unlocked(TabId.A_UPGRADES) && Ap.amount.gte("1e2")) {
+    Progress.unlock_tab(TabId.A_UPGRADES);
     window.game.alert_tabs.add(TabId.A_UPGRADES);
+  }
+});
+
+watch(() => B.unlocked, (value) => {
+  if (value) {
+    Progress.unlock_tab(TabId.B);
+    Progress.unlock_tab(TabId.B_UPGRADES);
+    Progress.unlock_tab(TabId.B_QOL);
+    Progress.unlock_tab(TabId.B_CHALLENGES);
   }
 });
 
 watchEffect(() => {
   if (window.game.show_cheat) {
-    unlock(TabId.CHEAT);
+    Progress.unlock_tab(TabId.CHEAT);
   }
 });
 
@@ -62,6 +66,23 @@ watchEffect(() => {
       message_text: "默认情况下, 游戏速度达到 5 时, 手动签到按钮将隐藏. 可在设置页修改.",
       done() {
         ignore_alert(AlertId.HIDE_SIGN);
+      },
+    });
+  }
+});
+
+const Ai_scaling_message: Ref<number | null> = ref(null);
+
+watchEffect(() => {
+  if (!alert_ignored(AlertId.B_UNLOCK) && Ai_scaling_message.value === null && Ap.amount.gte(DC.dNm)) {
+    Ai_scaling_message.value = add_global_message({
+      type: 'alert',
+      message_text: [
+        "在价格达到 ", DC.dNm, " ", Ap.formatted_name(), " 后, ",
+        Ai.formatted_name(), " 将无法购买.", br(),
+        "此时你可以重置所有与 ", Ap.formatted_name(), " 有关的资源以获得 ", Bp.formatted_name(), ", 并购买更多升级."],
+      done() {
+        ignore_alert(AlertId.B_UNLOCK);
       },
     });
   }

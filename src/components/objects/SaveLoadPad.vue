@@ -68,7 +68,7 @@ let chosen_slot: Ref<string | null> = ref(null);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 50;
 }
 
 .pad-body {

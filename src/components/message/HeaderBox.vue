@@ -1,9 +1,17 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 
+import TextFormatter from "@/components/objects/TextFormatter.vue";
+import type { FormattedText } from "@/util/format.js";
+
+defineProps<{
+  data: FormattedText
+}>();
 </script>
 
 <template>
-  $END$
+  <div class="message-header">
+    <TextFormatter :text="data"/>
+  </div>
 </template>
 
 <style scoped>

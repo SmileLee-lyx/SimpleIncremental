@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { set_make_B_animation } from "@/animation/make-B-animation.js";
+import MakeBAnimation from "@/components/animation/MakeBAnimation.vue";
 import EndgameWindow from "@/components/EndgameWindow.vue";
 import Header from "@/components/Header.vue";
 import MessageManager from "@/components/message/MessageManager.vue";
@@ -8,15 +10,25 @@ import { run_on_frame } from "@/components/misc/run-on-frame.ts";
 import TextFormatter from "@/components/objects/TextFormatter.vue";
 import OneTimeEvents from "@/components/OneTimeEvents.vue";
 import SideBar from "@/components/SideBar.vue";
+import AchievementsTab from "@/components/Tabs/AchievementsTab.vue";
 import ATab from "@/components/Tabs/ATab.vue";
 import AUpgradesTab from "@/components/Tabs/AUpgradesTab.vue";
+import BChallengesTab from "@/components/Tabs/BChallengesTab.vue";
+import BQolTab from "@/components/Tabs/BQolTab.vue";
+import BTab from "@/components/Tabs/BTab.vue";
+import BUpgradesTab from "@/components/Tabs/BUpgradesTab.vue";
 import CheatTab from "@/components/Tabs/CheatTab.vue";
 import SettingsTab from "@/components/Tabs/SettingsTab.vue";
 import { TabId } from "@/core/main/defines.ts";
 
 import "@/assets/main.scss";
 import { gameLoop } from "@/core/main/game-loop.ts";
-import { active_message_indices, global_messages } from "@/core/main/global-messages.js";
+import {
+  active_message_indices,
+  global_messages,
+  headers,
+  remove_header_message_timeout,
+} from "@/core/main/global-messages.js";
 import { init } from "@/core/main/init.ts";
 import type { FormattedText } from "@/util/format.js";
 import { type Component, computed, type ComputedRef } from "vue";
@@ -51,12 +63,33 @@ run_on_frame(() => {
 init_timer();
 init_keyboard_press();
 
+const tabs: Record<TabId, Component | null> = {
+  [TabId.AUTOMATION]: null,
+  [TabId.A]: ATab,
+  [TabId.A_UPGRADES]: AUpgradesTab,
+  [TabId.B]: BTab,
+  [TabId.B_UPGRADES]: BUpgradesTab,
+  [TabId.B_QOL]: BQolTab,
+  [TabId.B_CHALLENGES]: BChallengesTab,
+  [TabId.ACHIEVEMENTS]: AchievementsTab,
+  [TabId.SETTINGS]: SettingsTab,
+  [TabId.CHEAT]: CheatTab,
+}
+
 let activeTab: ComputedRef<Component | null> = computed(() => {
   switch (game.current_tab) {
     case TabId.A:
       return ATab;
     case TabId.A_UPGRADES:
       return AUpgradesTab;
+    case TabId.B:
+      return BTab;
+    case TabId.B_UPGRADES:
+      return BUpgradesTab;
+    case TabId.B_QOL:
+      return BQolTab;
+    case TabId.B_CHALLENGES:
+      return BChallengesTab;
     case TabId.SETTINGS:
       return SettingsTab;
     case TabId.CHEAT:
@@ -83,7 +116,10 @@ let activeTab: ComputedRef<Component | null> = computed(() => {
   <div class="auto-save-time">
     <TextFormatter :text="auto_save_time_text"/>
   </div>
-  <MessageManager :indices="active_message_indices" :messages="global_messages"/>
+  <MessageManager :clear_header_timeout="remove_header_message_timeout" :headers="headers"
+                  :indices="active_message_indices" :messages="global_messages"/>
+
+  <MakeBAnimation :set_start_animation="set_make_B_animation"></MakeBAnimation>
 </template>
 
 <style scoped>

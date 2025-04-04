@@ -1,7 +1,7 @@
 sub {
   vertical-align: baseline;
-  transform: translateY(0.3em) scale(0.8); /* 向下移动并缩小字号 */
-  display: inline-block; /* transform 需要 block 或 inline-block */
+  transform: translateY(0.3em) scale(0.8);
+  display: inline-block;
 }
 
 .main-text, .text-box {

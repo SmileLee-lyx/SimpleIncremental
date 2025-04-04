@@ -1,5 +1,5 @@
-import { init_game, init_player } from "@/core/main/defines.ts";
 import { initialize_instances } from "@/core/instances/instance-init.js";
+import { init_game, init_player } from "@/core/main/defines.ts";
 import { init_saves, load_current_auto_save } from "@/save/save-load.js";
 import Decimal from "break_eternity.js";
 import { reactive } from "vue";

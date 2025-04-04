@@ -7,6 +7,9 @@ function format_pow10(mag: number, precision: number = 6): string {
         a = a / 10;
         c = c + 1;
     }
+    if (c === 1e6) {
+        return "e1.00000e6";
+    }
     return a.toPrecision(precision) + "e" + c;
 }
 
@@ -73,7 +76,6 @@ declare global {
 
 window.format = format;
 
-
 export type FormattedText = null | FormattedText[] | string | number | Decimal |
     { type: 'span' | 'sub', class?: string[], text: FormattedText, } |
     { type: 'br' };
@@ -92,6 +94,10 @@ export function B_text(text: FormattedText, ...extra_classes: string[]): Formatt
 
 export function large(text: FormattedText, ...extra_classes: string[]): FormattedText {
     return { type: 'span', class: ['large', ...extra_classes], text: text };
+}
+
+export function small(text: FormattedText, ...extra_classes: string[]): FormattedText {
+    return { type: 'span', class: ['small', ...extra_classes], text: text };
 }
 
 export function fixed_width(text: FormattedText, ...extra_classes: string[]): FormattedText {

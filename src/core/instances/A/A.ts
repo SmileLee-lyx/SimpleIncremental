@@ -2,11 +2,12 @@ import Ai from "@/core/instances/A/Ai.js";
 import Ap from "@/core/instances/A/Ap.js";
 import At from "@/core/instances/A/At.js";
 import { register } from "@/core/instances/instance-init.js";
+import Progress from "@/core/instances/Progress/Progress.js";
 import DC from "@/core/main/DC.js";
-import { BuyMode } from "@/core/main/defines.js";
+import { TabId } from "@/core/main/defines.js";
 import { add_global_message } from "@/core/main/global-messages.js";
-import { SignSetting } from "@/core/main/settings.js";
-import type { FormattedText } from "@/util/format.js";
+import { BuyMode, SignSetting } from "@/core/main/settings.js";
+import { A_text, br, type FormattedText } from "@/util/format.js";
 import Decimal from "break_eternity.js";
 import { range } from "lodash";
 import { ref } from "vue";
@@ -27,6 +28,29 @@ function _automation_Ai(layer: number) {
         set enabled(value: boolean) {
             window.player.A.Ai_automation[layer - 1].enabled = value;
         },
+
+        requirement_for_unlock(): Decimal {
+            return DC.d10.pow(10 * layer);
+        },
+
+        unlock_buyable(): boolean {
+            return Ap.amount.gte(A.automation.Ai(layer).requirement_for_unlock());
+        },
+
+        buy_unlock() {
+            if (!A.automation.Ai(layer).unlock_buyable()) return;
+            A.automation.Ai(layer).unlocked = true;
+            A.automation.Ai(layer).enabled = true;
+        },
+
+        // formatted text
+
+        unlock_text(): FormattedText {
+            return [
+                "解锁自动购买 ", Ai(layer).formatted_name(), br(),
+                "需要 ", A_text(A.automation.Ai(layer).requirement_for_unlock()), " ", Ap.formatted_name(),
+            ];
+        },
     };
 }
 
@@ -46,6 +70,44 @@ const A = {
             set enabled(value: boolean) {
                 window.player.A.At_automation.enabled = value;
             },
+
+            requirement_for_unlock(): Decimal {
+                return DC.d10.pow(100);
+            },
+
+            unlock_buyable(): boolean {
+                return Ap.amount.gte(A.automation.At.requirement_for_unlock());
+            },
+
+            buy_unlock() {
+                if (!A.automation.At.unlock_buyable()) return;
+                A.automation.At.unlocked = true;
+                A.automation.At.enabled = true;
+            },
+
+            // formatted text
+
+            unlock_text(): FormattedText {
+                return [
+                    "解锁自动购买 ", At.formatted_name(), br(),
+                    "需要 ", A_text(A.automation.At.requirement_for_unlock()), " ", Ap.formatted_name(),
+                ];
+            },
+        },
+
+        auto_sign_buyable(): boolean {
+            return Ap.amount.gte(1e4);
+        },
+
+        buy_auto_sign() {
+            if (!A.automation.auto_sign_buyable()) return;
+
+            At.unlocked = true;
+            Progress.unlock_tab(TabId.AUTOMATION);
+        },
+
+        unlock_auto_sign_message(): FormattedText {
+            return ["解锁自动签到", br(), "需要 ", A_text(DC.d1e4), " ", Ap.formatted_name()];
         },
     },
 
@@ -126,6 +188,11 @@ const A = {
     },
 
     // formatted text
+
+    formatted_name(): FormattedText {
+        return A_text("A");
+    },
+
     sign_message(): FormattedText {
         return "签到";
     },
@@ -139,8 +206,8 @@ declare global {
     }
 }
 
-export function init() {
-    window.A = A;
-}
-
-register('A', { init: init });
+register('A', {
+    init() {
+        window.A = A;
+    },
+});
