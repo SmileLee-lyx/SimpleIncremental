@@ -3,6 +3,7 @@ import { fullReset } from "@/core/main/full-reset.js";
 
 import "@/assets/main.scss";
 import { ref, type Ref, watch } from "vue";
+import Progress from "../core/instances/Progress/Progress.js";
 
 let player = window.player;
 
@@ -45,7 +46,7 @@ watch(() => window.player.progress.endgame, (value) => {
 <template>
   <div v-if="show" class="message-window">
     <h3>恭喜你，游戏胜利！</h3>
-    <div style="text-align: center">你的用时: {{ formatGameTime(player.progress.real_time) }}</div>
+    <div style="text-align: center">你的用时: {{ formatGameTime(Progress.Game.real_time) }}</div>
     <div v-if="player.progress.used_cheat">你使用了作弊功能.</div>
     <div>
       <button class="message-button" @click="continue_game()">继续玩</button>
