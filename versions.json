@@ -10,5 +10,9 @@
   "v1": {
     "name": "v1 正式版",
     "path": "v1/"
+  },
+  "v2alpha": {
+    "name": "v2 开发版",
+    "path": "v2alpha/"
   }
 }
