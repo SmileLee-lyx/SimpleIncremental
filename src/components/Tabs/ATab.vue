@@ -25,7 +25,7 @@ import Atu from "@/core/instances/A/Atu.js";
         <TextFormatter :text="At.buy_mode_description()"/>
       </template>
     </ToggleButton>
-    <TextFormatter :text="At.auto_sign_description()"/>
+    <TextFormatter :text="A.automation.auto_sign.auto_sign_description()"/>
     <br>
     <UpgradeButton
         :visible="A.sign_visible"
@@ -95,7 +95,9 @@ import Atu from "@/core/instances/A/Atu.js";
         :buyable_amount="Ai(layer).buyable_amount_to10"
         :has_tooltip="true"
         :total_amount="10"
-        :buy="Ai(layer).buy">
+        :buy="Ai(layer).buy"
+        :extra_classes="'A-button'"
+    >
       <template #text>
         <span class="text-box small-text">
           <TextFormatter v-if="!is_shift_pressed" :text="Ai(layer).buy_button_message()"/>
@@ -130,10 +132,6 @@ import Atu from "@/core/instances/A/Atu.js";
   flex-direction: column;
 }
 
-.flex-element {
-  flex-grow: 1;
-}
-
 .grey-background {
   background: #ccc;
 }
@@ -146,12 +144,12 @@ import Atu from "@/core/instances/A/Atu.js";
 .buy-mode-button {
   position: absolute;
   left: 10px;
-  top: 170px;
+  top: 10px;
 }
 
 .buy-mode-button-2 {
   position: absolute;
   left: 10px;
-  top: 210px;
+  top: 50px;
 }
 </style>

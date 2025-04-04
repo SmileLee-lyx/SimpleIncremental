@@ -128,6 +128,27 @@
   background: linear-gradient(to right, #4c4 var(--p1), #9e9 var(--p1), #9e9 var(--p2), #fff var(--p2));
 }
 
+.purchase-button.A-button {
+  &.not-unlocked {
+    border-color: #aaa;
+    background: #aaa;
+  }
+
+  &.not-buyable {
+    border-color: #f00;
+  }
+
+  &.buyable {
+    border-color: #f00;
+  }
+
+  &.fully-bought {
+    border-color: #f88;
+    background: #f88;
+  }
+  background: linear-gradient(to right, #f88 var(--p1), #fcc var(--p1), #fcc var(--p2), #fff var(--p2));
+}
+
 .select-button {
   @extend .general-button;
 

@@ -30,9 +30,7 @@ run_on_frame(() => {
 
 watch(() => B.unlocked, (value) => {
   if (value) {
-    Progress.unlock_tab(TabId.B);
     Progress.unlock_tab(TabId.B_UPGRADES);
-    Progress.unlock_tab(TabId.B_QOL);
     Progress.unlock_tab(TabId.B_CHALLENGES);
   }
 });

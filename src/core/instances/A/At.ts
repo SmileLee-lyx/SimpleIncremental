@@ -5,17 +5,11 @@ import Atu from "@/core/instances/A/Atu.ts";
 import { register } from "@/core/instances/instance-init.js";
 import DC from "@/core/main/DC.ts";
 import { BuyMode } from "@/core/main/settings.ts";
-import { ExpLinearScaling, ExpQuadScaling, type Scaling } from "@/core/math/scaling.js";
-import { A_text, br, fixed_width, type FormattedText, sub } from "@/util/format.ts";
+import { ExpCapScaling, ExpLinearScaling, ExpQuadScaling, type Scaling } from "@/core/math/scaling.js";
+import { A_text, br, type FormattedText, sub } from "@/util/format.ts";
 import Decimal from "break_eternity.js";
 
 const At = {
-    get unlocked(): boolean {
-        return window.player.A.At_unlocked;
-    },
-    set unlocked(value: boolean) {
-        window.player.A.At_unlocked = value;
-    },
     get bought(): Decimal {
         return window.player.A.At;
     },
@@ -30,7 +24,7 @@ const At = {
     },
 
     sign_speed(): Decimal {
-        if (!At.unlocked) return DC.d0;
+        if (!A.automation.auto_sign.unlocked) return DC.d0;
         return At.sign_speed_per_At().pow(At.bought);
     },
 
@@ -50,10 +44,9 @@ const At = {
     // buy
 
     price_scaling(): Scaling {
-        return new ExpQuadScaling(
+        return new ExpCapScaling(
             new ExpLinearScaling(10, 10, 1, false),
             { price: DC.dNm },
-            Infinity,
         );
     },
 
@@ -62,11 +55,11 @@ const At = {
     },
 
     visible(): boolean {
-        return At.unlocked;
+        return A.automation.auto_sign.unlocked;
     },
 
     unlocked_Ai(): boolean {
-        if (!At.unlocked) return false;
+        if (!A.automation.auto_sign.unlocked) return false;
         return Ai(1).amount.gt(0);
     },
 
@@ -119,22 +112,6 @@ const At = {
             default:
                 return null;
         }
-    },
-
-    auto_sign_description(): FormattedText {
-        if (!At.unlocked) {
-            return "自动签到已禁用.";
-        }
-        let next_sign_message: FormattedText;
-        if (At.sign_speed().gt(10)) {
-            next_sign_message = null;
-        } else {
-            next_sign_message = [" 下次自动签到时间: ", fixed_width(A.time_to_next_sign_ms(), 'width-30'), "毫秒."];
-        }
-        return [
-            "正在自动签到, 当前速度: ", At.sign_speed(), "/秒.", next_sign_message, br(),
-            "每个 ", At.formatted_name(), " 将签到速度提升 ×", Atu.sign_speed_per_At(), ".",
-        ];
     },
 
     buy_button_message(mode?: BuyMode): FormattedText {

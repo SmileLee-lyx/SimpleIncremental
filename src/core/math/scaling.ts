@@ -99,6 +99,55 @@ export class ExpLinearScaling implements Scaling {
 
 type ThresholdSpecify = DecimalSource | { price: DecimalSource } | { amount: DecimalSource };
 
+export class ExpCapScaling implements Scaling {
+    base: ExpLinearScaling;
+    threshold_price: Decimal;
+    threshold_amount: Decimal;
+
+    constructor(base: ExpLinearScaling, threshold: ThresholdSpecify) {
+        this.base = base;
+
+        if (typeof threshold === 'object' && 'price' in threshold) {
+            this.threshold_price = new Decimal(threshold.price);
+            this.threshold_amount = this.threshold_price.div(this.base.start).log(this.base.raise).floor()
+                .times(this.base.raise_amount);
+        } else if (typeof threshold === 'object' && 'amount' in threshold) {
+            this.threshold_amount = new Decimal(threshold.amount);
+            this.threshold_price = this.base.price(this.threshold_amount);
+        } else {
+            this.threshold_price = new Decimal(threshold);
+            this.threshold_amount = this.threshold_price.div(this.base.start).log(this.base.raise).floor()
+                .times(this.base.raise_amount);
+        }
+    }
+    public price(bought: DecimalSource): Decimal {
+        bought = new Decimal(bought);
+
+        if (bought.lt(this.threshold_amount)) {
+            return this.base.price(bought);
+        }
+
+        return DC.dInf;
+    }
+
+    public buy_max(bought: DecimalSource, currency: DecimalSource): Decimal {
+        currency = new Decimal(currency);
+        if (currency.lt(this.threshold_price)) {
+            return this.base.buy_max(bought, currency);
+        }
+
+        return this.threshold_amount;
+    }
+
+    public price_amount(bought: DecimalSource, new_bought: DecimalSource): Decimal {
+        new_bought = new Decimal(new_bought);
+
+        if (new_bought.lte(this.threshold_amount)) return this.base.price_amount(bought, new_bought);
+
+        return DC.dInf;
+    }
+}
+
 export class ExpQuadScaling implements Scaling {
     base: ExpLinearScaling;
     threshold_price: Decimal;
@@ -174,8 +223,10 @@ declare global {
     interface Window {
         ExpLinearScaling: typeof ExpLinearScaling;
         ExpQuadScaling: typeof ExpQuadScaling;
+        ExpCapScaling: typeof ExpCapScaling;
     }
 }
 
 window.ExpLinearScaling = ExpLinearScaling;
 window.ExpQuadScaling = ExpQuadScaling;
+window.ExpCapScaling = ExpCapScaling;

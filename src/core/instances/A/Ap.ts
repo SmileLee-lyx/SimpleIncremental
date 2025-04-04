@@ -1,8 +1,7 @@
+import A from "@/core/instances/A/A.js";
 import Ai from "@/core/instances/A/Ai.ts";
-import At from "@/core/instances/A/At.ts";
 import BU from "@/core/instances/B/BU.js";
 import { register } from "@/core/instances/instance-init.js";
-import Progress from "@/core/instances/Progress/Progress.js";
 import Records from "@/core/instances/Progress/Records.js";
 import DC from "@/core/main/DC.js";
 import { A_text, type FormattedText } from "@/util/format.ts";
@@ -19,7 +18,7 @@ const Ap = {
     },
 
     spend(amount: Decimal): void {
-        Ap.amount = Ap.amount.sub(amount).round();
+        Ap.amount = Ap.amount.sub(amount);
     },
 
     amount_after_reset(): Decimal {
@@ -49,7 +48,7 @@ const Ap = {
     },
 
     amount_inc_message(): FormattedText {
-        if (!At.unlocked) {
+        if (!A.automation.auto_sign.unlocked || !A.automation.auto_sign.enabled) {
             return ["+", Ap.generated_per_sign(), "/签到"];
         } else {
             return ["+", Ap.generated_per_second(), "/秒"];

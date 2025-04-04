@@ -1,13 +1,14 @@
 import Ai from "@/core/instances/A/Ai.js";
 import Ap from "@/core/instances/A/Ap.js";
 import At from "@/core/instances/A/At.js";
+import Atu from "@/core/instances/A/Atu.js";
 import { register } from "@/core/instances/instance-init.js";
 import Progress from "@/core/instances/Progress/Progress.js";
 import DC from "@/core/main/DC.js";
 import { TabId } from "@/core/main/defines.js";
 import { add_global_message } from "@/core/main/global-messages.js";
 import { BuyMode, SignSetting } from "@/core/main/settings.js";
-import { A_text, br, type FormattedText } from "@/util/format.js";
+import { A_text, br, fixed_width, type FormattedText } from "@/util/format.js";
 import Decimal from "break_eternity.js";
 import { range } from "lodash";
 import { ref } from "vue";
@@ -28,6 +29,12 @@ function _automation_Ai(layer: number) {
         set enabled(value: boolean) {
             window.player.A.Ai_automation[layer - 1].enabled = value;
         },
+        get mode(): BuyMode {
+            return window.player.A.Ai_automation[layer - 1].buy_mode;
+        },
+        set mode(value: BuyMode) {
+            window.player.A.Ai_automation[layer - 1].buy_mode = value;
+        },
 
         requirement_for_unlock(): Decimal {
             return DC.d10.pow(10 * layer);
@@ -41,6 +48,11 @@ function _automation_Ai(layer: number) {
             if (!A.automation.Ai(layer).unlock_buyable()) return;
             A.automation.Ai(layer).unlocked = true;
             A.automation.Ai(layer).enabled = true;
+            Progress.unlock_tab(TabId.AUTOMATION);
+        },
+
+        allowed_modes(): BuyMode[] {
+            return [BuyMode.BUY_ONE, BuyMode.BUY_TEN];
         },
 
         // formatted text
@@ -51,11 +63,98 @@ function _automation_Ai(layer: number) {
                 "需要 ", A_text(A.automation.Ai(layer).requirement_for_unlock()), " ", Ap.formatted_name(),
             ];
         },
+
+        setting_description(): FormattedText {
+            return [Ai(layer).formatted_name(), " 自动购买"];
+        },
+
+        enable_button_text(): FormattedText {
+            if (A.automation.Ai(layer).enabled) {
+                return "开启";
+            } else {
+                return "关闭";
+            }
+        },
+
+        mode_button_text(): FormattedText {
+            switch (A.automation.Ai(layer).mode) {
+                case BuyMode.BUY_ONE:
+                    return "购买 1 个";
+                case BuyMode.BUY_TEN:
+                    return "购买 10 个";
+                case BuyMode.BUY_MAX:
+                    return "购买最大";
+                default:
+                    return null;
+            }
+        },
     };
 }
 
 const A = {
     automation: {
+        auto_sign: {
+            get unlocked(): boolean {
+                return window.player.A.auto_sign.unlocked;
+            },
+            set unlocked(value: boolean) {
+                window.player.A.auto_sign.unlocked = value;
+            },
+            get enabled(): boolean {
+                return window.player.A.auto_sign.enabled;
+            },
+            set enabled(value: boolean) {
+                window.player.A.auto_sign.enabled = value;
+            },
+
+            buyable(): boolean {
+                return Ap.amount.gte(1e4);
+            },
+
+            buy() {
+                if (!A.automation.auto_sign.buyable()) return;
+
+                A.automation.auto_sign.unlocked = true;
+                A.automation.auto_sign.enabled = true;
+                Progress.unlock_tab(TabId.AUTOMATION);
+            },
+
+            unlock_message(): FormattedText {
+                return ["解锁自动签到", br(), "需要 ", A_text(DC.d1e4), " ", Ap.formatted_name()];
+            },
+
+            auto_sign_description(): FormattedText {
+                if (!A.automation.auto_sign.unlocked) {
+                    return "自动签到未解锁.";
+                }
+                if (!A.automation.auto_sign.enabled) {
+                    return "自动签到已禁用.";
+                }
+                let next_sign_message: FormattedText;
+                if (At.sign_speed().gt(10)) {
+                    next_sign_message = null;
+                } else {
+                    next_sign_message = [" 下次自动签到时间: ", fixed_width(A.time_to_next_sign_ms(), 'width-30'), "毫秒."];
+                }
+                return [
+                    "正在自动签到, 当前速度: ", At.sign_speed(), "/秒.", next_sign_message, br(),
+                    "每个 ", At.formatted_name(), " 将签到速度提升 ×", Atu.sign_speed_per_At(), ".",
+                ];
+            },
+
+            setting_description(): FormattedText {
+                return "自动签到";
+            },
+
+            enable_button_text(): FormattedText {
+                if (A.automation.auto_sign.enabled) {
+                    return "开启";
+                } else {
+                    return "关闭";
+                }
+            },
+        },
+
         Ai: _automation_Ai,
         At: {
             get unlocked(): boolean {
@@ -70,6 +169,12 @@ const A = {
             set enabled(value: boolean) {
                 window.player.A.At_automation.enabled = value;
             },
+            get mode(): BuyMode {
+                return window.player.A.At_automation.buy_mode;
+            },
+            set mode(value: BuyMode) {
+                window.player.A.At_automation.buy_mode = value;
+            },
 
             requirement_for_unlock(): Decimal {
                 return DC.d10.pow(100);
@@ -83,8 +188,12 @@ const A = {
                 if (!A.automation.At.unlock_buyable()) return;
                 A.automation.At.unlocked = true;
                 A.automation.At.enabled = true;
+                Progress.unlock_tab(TabId.AUTOMATION);
             },
 
+            allowed_modes(): BuyMode[] {
+                return [BuyMode.BUY_ONE];
+            },
             // formatted text
 
             unlock_text(): FormattedText {
@@ -93,21 +202,29 @@ const A = {
                     "需要 ", A_text(A.automation.At.requirement_for_unlock()), " ", Ap.formatted_name(),
                 ];
             },
-        },
 
-        auto_sign_buyable(): boolean {
-            return Ap.amount.gte(1e4);
-        },
+            setting_description(): FormattedText {
+                return [At.formatted_name(), " 自动购买"];
+            },
 
-        buy_auto_sign() {
-            if (!A.automation.auto_sign_buyable()) return;
+            enable_button_text(): FormattedText {
+                if (A.automation.At.enabled) {
+                    return "开启";
+                } else {
+                    return "关闭";
+                }
+            },
 
-            At.unlocked = true;
-            Progress.unlock_tab(TabId.AUTOMATION);
-        },
-
-        unlock_auto_sign_message(): FormattedText {
-            return ["解锁自动签到", br(), "需要 ", A_text(DC.d1e4), " ", Ap.formatted_name()];
+            mode_button_text(): FormattedText {
+                switch (A.automation.At.mode) {
+                    case BuyMode.BUY_ONE:
+                        return "购买 1 个";
+                    case BuyMode.BUY_MAX:
+                        return "购买最大";
+                    default:
+                        return null;
+                }
+            },
         },
     },
 
@@ -134,13 +251,13 @@ const A = {
     sign_visible(): boolean {
         switch (window.player.settings.sign_setting) {
             case SignSetting.DEFAULT: {
-                return !(At.unlocked && At.sign_speed().gt("5"));
+                return !(A.automation.auto_sign.unlocked && At.sign_speed().gt("5"));
             }
             case SignSetting.ALWAYS: {
                 return true;
             }
             case SignSetting.NEVER: {
-                return !At.unlocked;
+                return !A.automation.auto_sign.unlocked;
             }
         }
     },
@@ -150,13 +267,13 @@ const A = {
     last_sign_duration: ref(0),
 
     time_to_next_sign_ms(): number {
-        if (!At.unlocked) return Infinity;
+        if (!A.automation.auto_sign.unlocked) return Infinity;
         if (At.sign_speed().gt(1000)) return 0;
         return Math.floor(1000 / At.sign_speed().toNumber() - A.last_sign_duration.value * 1000);
     },
 
     runGameLoop_sign(duration: number) {
-        if (!At.unlocked) {
+        if (!A.automation.auto_sign.unlocked || !A.automation.auto_sign.enabled) {
             A.last_sign_duration.value = 0;
             return;
         }
@@ -174,11 +291,11 @@ const A = {
     runGameLoop_auto_buy(duration: number) {
         for (let layer = 1; layer <= 8; ++layer) {
             if (A.automation.Ai(layer).unlocked && A.automation.Ai(layer).enabled) {
-                Ai(layer).buy(BuyMode.BUY_TEN);
+                Ai(layer).buy(A.automation.Ai(layer).mode);
             }
         }
         if (A.automation.At.unlocked && A.automation.At.enabled) {
-            At.buy(BuyMode.BUY_ONE);
+            At.buy(A.automation.At.mode);
         }
     },
 

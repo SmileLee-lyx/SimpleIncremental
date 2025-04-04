@@ -15,9 +15,7 @@ function _BC(index: number) {
 }
 
 
-const BC = assignWithProperty(_BC, {
-
-});
+const BC = assignWithProperty(_BC, {});
 
 export default BC;
 

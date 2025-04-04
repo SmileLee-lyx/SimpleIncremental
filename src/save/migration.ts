@@ -2,7 +2,7 @@ import DC from "@/core/main/DC.js";
 import { defaultPlayer, type Player, TabId } from "@/core/main/defines.js";
 import { AlertId, AutoSaveSetting, BuyMode, SignSetting } from "@/core/main/settings.js";
 import Decimal from "break_eternity.js";
-import { cloneDeep } from "lodash";
+import { cloneDeep, omit } from "lodash";
 
 type MigrationResult = {
     success: true;
@@ -26,6 +26,8 @@ export function migration(data: any): MigrationResult {
     if (version <= 0) {
         result = migration_v1(result);
         warnings.push("version-0");
+    }
+    if (version <= 1) {
     }
     return {
         success: true,
@@ -78,11 +80,11 @@ interface Player_v1 {
     A: {
         Ap: Decimal;
         Ai: { amount: Decimal, bought: Decimal }[];
-        At_unlocked: boolean;
         At: Decimal;
         As: Decimal;
         Atu: Decimal;
 
+        auto_sign: { unlocked: boolean, enabled: boolean },
         Ai_automation: { unlocked: boolean, enabled: boolean, buy_mode: BuyMode }[];
         At_automation: { unlocked: boolean, enabled: boolean, buy_mode: BuyMode };
     };
@@ -173,7 +175,10 @@ function migration_v1(data: Player_v0): Player_v1 {
     }
 
     return {
-        A: data.A,
+        A: {
+            ...omit(data.A, 'At_unlocked'),
+            auto_sign: { unlocked: true, enabled: true },
+        },
         B: {
             unlocked: false,
             B_count: DC.d0,

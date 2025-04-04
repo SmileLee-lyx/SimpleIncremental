@@ -61,11 +61,11 @@ export interface Player {
     A: {
         Ap: Decimal;
         Ai: { amount: Decimal, bought: Decimal }[];
-        At_unlocked: boolean;
         At: Decimal;
         As: Decimal;
         Atu: Decimal;
 
+        auto_sign: { unlocked: boolean, enabled: boolean };
         Ai_automation: { unlocked: boolean, enabled: boolean, buy_mode: BuyMode }[];
         At_automation: { unlocked: boolean, enabled: boolean, buy_mode: BuyMode };
     };
@@ -128,10 +128,10 @@ export const defaultPlayer: Readonly<Player> = {
             { bought: DC.d0, amount: DC.d0 },
             { bought: DC.d0, amount: DC.d0 },
         ],
-        At_unlocked: false,
         At: DC.d0,
         As: DC.d0,
         Atu: DC.d0,
+        auto_sign: { unlocked: false, enabled: false },
         Ai_automation: [
             { unlocked: false, enabled: false, buy_mode: BuyMode.BUY_TEN },
             { unlocked: false, enabled: false, buy_mode: BuyMode.BUY_TEN },
@@ -170,7 +170,7 @@ export const defaultPlayer: Readonly<Player> = {
             game_time: DC.d0,
 
             best_Ap: DC.d0,
-        }
+        },
     },
     progress: {
         meta: '',

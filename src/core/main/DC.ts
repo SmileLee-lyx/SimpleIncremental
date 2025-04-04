@@ -17,6 +17,8 @@ const DC = {
     d1e4: new Decimal("1e4"),
     d1e10: new Decimal("1e10"),
     dNm: new Decimal(Number.MAX_VALUE),
+
+    dInf: new Decimal(Infinity),
 };
 
 export default DC;

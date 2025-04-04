@@ -1,3 +1,4 @@
+import A from "@/core/instances/A/A.js";
 import Ap from "@/core/instances/A/Ap.ts";
 import As from "@/core/instances/A/As.ts";
 import At from "@/core/instances/A/At.ts";
@@ -5,7 +6,7 @@ import BU from "@/core/instances/B/BU.js";
 import { register } from "@/core/instances/instance-init.js";
 import DC from "@/core/main/DC.ts";
 import { BuyMode } from "@/core/main/settings.ts";
-import { ExpLinearScaling, ExpQuadScaling, type Scaling } from "@/core/math/scaling.ts";
+import { ExpCapScaling, ExpLinearScaling, ExpQuadScaling, type Scaling } from "@/core/math/scaling.ts";
 import { A_text, br, type FormattedText, sub } from "@/util/format.ts";
 import { assignWithProperty } from "@/util/merge.ts";
 import Decimal from "break_eternity.js";
@@ -75,7 +76,7 @@ function _Ai(layer: number) {
                 new ExpLinearScaling(1e15, 1e15, 10),
                 new ExpLinearScaling(1e21, 1e20, 10),
             ];
-            return new ExpQuadScaling(linearScaling[layer - 1], { price: DC.dNm }, Infinity);
+            return new ExpCapScaling(linearScaling[layer - 1], { price: DC.dNm });
         },
 
         price(): Decimal {
@@ -163,7 +164,7 @@ function _Ai(layer: number) {
         },
 
         amount_inc_message(): FormattedText {
-            if (!At.unlocked) {
+            if (!A.automation.auto_sign.unlocked || !A.automation.auto_sign.enabled) {
                 return ["+", Ai(layer).generated_per_sign(), "/签到"];
             } else {
                 return ["+", Ai(layer).generated_per_second(), "/秒"];

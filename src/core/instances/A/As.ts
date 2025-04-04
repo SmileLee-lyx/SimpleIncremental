@@ -33,7 +33,7 @@ const As = {
     // buy
 
     unlocked(): boolean {
-        return At.unlocked;
+        return true;
     },
 
     visible(): boolean {

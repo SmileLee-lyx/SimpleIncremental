@@ -1,5 +1,4 @@
 import A from "@/core/instances/A/A.js";
-import Ap from "@/core/instances/A/Ap.js";
 import Progress from "@/core/instances/Progress/Progress.js";
 import { AutoSaveSetting } from "@/core/main/settings.js";
 import { auto_save } from "@/save/save-load.js";

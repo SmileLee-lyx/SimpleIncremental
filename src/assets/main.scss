@@ -9,3 +9,17 @@
 body {
   margin: 0;
 }
+
+.vert-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-element {
+  flex-grow: 1;
+}
+
+.content-center {
+  display: grid;
+  place-items: center;
+}

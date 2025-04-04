@@ -13,6 +13,7 @@ import SideBar from "@/components/SideBar.vue";
 import AchievementsTab from "@/components/Tabs/AchievementsTab.vue";
 import ATab from "@/components/Tabs/ATab.vue";
 import AUpgradesTab from "@/components/Tabs/AUpgradesTab.vue";
+import AutomationTab from "@/components/Tabs/AutomationTab.vue";
 import BChallengesTab from "@/components/Tabs/BChallengesTab.vue";
 import BQolTab from "@/components/Tabs/BQolTab.vue";
 import BTab from "@/components/Tabs/BTab.vue";
@@ -64,7 +65,7 @@ init_timer();
 init_keyboard_press();
 
 const tabs: Record<TabId, Component | null> = {
-  [TabId.AUTOMATION]: null,
+  [TabId.AUTOMATION]: AutomationTab,
   [TabId.A]: ATab,
   [TabId.A_UPGRADES]: AUpgradesTab,
   [TabId.B]: BTab,
@@ -77,26 +78,7 @@ const tabs: Record<TabId, Component | null> = {
 }
 
 let activeTab: ComputedRef<Component | null> = computed(() => {
-  switch (game.current_tab) {
-    case TabId.A:
-      return ATab;
-    case TabId.A_UPGRADES:
-      return AUpgradesTab;
-    case TabId.B:
-      return BTab;
-    case TabId.B_UPGRADES:
-      return BUpgradesTab;
-    case TabId.B_QOL:
-      return BQolTab;
-    case TabId.B_CHALLENGES:
-      return BChallengesTab;
-    case TabId.SETTINGS:
-      return SettingsTab;
-    case TabId.CHEAT:
-      return CheatTab;
-    default:
-      return null;
-  }
+  return tabs[game.current_tab];
 });
 
 </script>
