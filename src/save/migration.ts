@@ -1,6 +1,16 @@
-import DC from "@/core/main/DC.js";
-import { defaultPlayer, type Player, TabId } from "@/core/main/defines.js";
+import Dec from "@/core/main/Dec.js";
+import {
+    type AnimationSettings,
+    type AsBuySettings,
+    type AtuBuySettings,
+    type BBuySettings,
+    type ConfirmationSettings,
+    defaultPlayer,
+    type Player,
+    TabId,
+} from "@/core/main/defines.js";
 import { AlertId, AutoSaveSetting, BuyMode, SignSetting } from "@/core/main/settings.js";
+import { get_bit } from "@/util/bit-util.js";
 import Decimal from "break_eternity.js";
 import { cloneDeep, omit } from "lodash";
 
@@ -13,6 +23,8 @@ type MigrationResult = {
     errors?: string[];
 }
 
+type WithWarning<T> = { result: T, warnings?: string[] };
+
 export function migration(data: any): MigrationResult {
     if (data === null || typeof data !== "object")
         return { success: false, errors: ["data-not-object"] };
@@ -20,7 +32,7 @@ export function migration(data: any): MigrationResult {
         return { success: false, errors: ["no-version"] };
     const version = data.version;
     let result = data.data;
-    if (version > 1)
+    if (version > 2)
         return { success: false, errors: ["invalid-version"] };
     let warnings: string[] = [];
     if (version <= 0) {
@@ -28,6 +40,9 @@ export function migration(data: any): MigrationResult {
         warnings.push("version-0");
     }
     if (version <= 1) {
+        let v2 = migration_v2(result);
+        result = v2.result;
+        if (v2.warnings !== undefined) warnings.push(...v2.warnings);
     }
     return {
         success: true,
@@ -181,9 +196,9 @@ function migration_v1(data: Player_v0): Player_v1 {
         },
         B: {
             unlocked: false,
-            B_count: DC.d0,
-            Bp: DC.d0,
-            Bq: DC.d0,
+            B_count: Dec.d0,
+            Bp: Dec.d0,
+            Bq: Dec.d0,
             BU_bits: [0, 0],
             BU_qol_bits: [0, 0],
             BC_completions: [null, null, null, null, null, null, null, null],
@@ -195,16 +210,16 @@ function migration_v1(data: Player_v0): Player_v1 {
         stats: {
             Game: {
                 real_time: 0,
-                game_time: DC.d0,
+                game_time: Dec.d0,
 
-                best_Ap: DC.d0,
-                best_Bp: DC.d0,
+                best_Ap: Dec.d0,
+                best_Bp: Dec.d0,
             },
             this_B: {
                 real_time: 0,
-                game_time: DC.d0,
+                game_time: Dec.d0,
 
-                best_Ap: DC.d0,
+                best_Ap: Dec.d0,
             },
         },
         progress: {
@@ -215,6 +230,116 @@ function migration_v1(data: Player_v0): Player_v1 {
             endgame: false, // reset endgame
         },
     };
+}
+
+interface Player_v2 {
+    A: {
+        Ap: Decimal;
+        Ai: { amount: Decimal, bought: Decimal }[];
+        At: Decimal;
+        As: Decimal;
+        Atu: Decimal;
+
+        auto_sign: { unlocked: boolean; enabled: boolean; };
+        Ai_automation: { unlocked: boolean; enabled: boolean; buy_mode: BuyMode; }[];
+        At_automation: { unlocked: boolean; enabled: boolean; buy_mode: BuyMode; };
+        As_automation: {
+            unlocked: boolean; enabled: boolean;
+            buy_settings: AsBuySettings;
+        };
+        Atu_automation: {
+            unlocked: boolean; enabled: boolean;
+            buy_settings: AtuBuySettings;
+        };
+    };
+    B: {
+        unlocked: boolean;
+        B_count: Decimal;
+        Bp: Decimal;
+        Bp_mult_bought: Decimal;
+        BU_bits: number[];
+        BU_count: Decimal[];
+        BU_qol_bits: number[];
+        BC_completions: Decimal[];
+        running_BC?: { label: number; amount: Decimal; };
+
+        B_automation: {
+            unlocked: boolean; enabled: boolean;
+            buy_settings: BBuySettings
+        };
+    };
+    settings: {
+        sign_setting: SignSetting;
+        auto_save_setting: AutoSaveSetting;
+        confirmation_setting: ConfirmationSettings;
+        animation_setting: AnimationSettings;
+    };
+    stats: {
+        Game: {
+            real_time: number;
+            game_time: Decimal;
+
+            best_Ap: Decimal;
+            best_Bp: Decimal;
+            best_B_time: Decimal;
+            best_Bp_speed: Decimal;
+        }
+        this_B: {
+            real_time: number;
+            game_time: Decimal;
+
+            best_Ap: Decimal;
+        }
+    };
+    progress: {
+        meta: string;
+        unlocked_tabs: TabId[];
+        ignored_alerts: AlertId[];
+        used_cheat: boolean;
+        endgame: boolean;
+    };
+}
+
+function migration_v2(data: Player_v1): WithWarning<Player_v2> {
+    let warnings: string[] = [];
+
+    data.progress.unlocked_tabs.push(TabId.STATS);
+
+    if (get_bit(data.B.BU_bits, 7)) {
+        data.progress.unlocked_tabs.push(TabId.B_QOL);
+        warnings.push('version-1-Bq');
+    }
+
+    const result: Player_v2 = {
+        A: {
+            ...data.A,
+            As_automation: cloneDeep(defaultPlayer.A.As_automation),
+            Atu_automation: cloneDeep(defaultPlayer.A.Atu_automation),
+        },
+        B: {
+            ...omit(data.B, ['Bq', 'BC_completions']),
+            Bp_mult_bought: Dec.d0,
+            B_automation: cloneDeep(defaultPlayer.B.B_automation),
+            BC_completions: data.B.BC_completions.map((v) => v === null ? Dec.d0 : v),
+            BU_count: [],
+        },
+        progress: data.progress,
+        settings: {
+            ...data.settings,
+            confirmation_setting: cloneDeep(defaultPlayer.settings.confirmation_setting),
+            animation_setting: cloneDeep(defaultPlayer.settings.animation_setting),
+        },
+        stats: {
+            Game: {
+                ...data.stats.Game,
+                best_B_time: Dec.dInf,
+                best_Bp_speed: Dec.d0,
+            },
+            this_B: data.stats.this_B,
+        },
+    };
+
+    return { result: result, warnings };
 }
 
 // for future migration: simply copy progress.Game to progress.this_C (for example)

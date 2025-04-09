@@ -3,6 +3,8 @@
 import TextFormatter from "@/components/objects/TextFormatter.vue";
 import UpgradeButton from "@/components/objects/UpgradeButton.vue";
 import A from "@/core/instances/A/A.js";
+import Ai from "@/core/instances/A/Ai.js";
+import At from "@/core/instances/A/At";
 </script>
 
 <template>
@@ -19,25 +21,25 @@ import A from "@/core/instances/A/A.js";
       </template>
     </UpgradeButton>
     <UpgradeButton
-        :buy="A.automation.At.buy_unlock"
-        :buyable="A.automation.At.unlock_buyable"
+        :buy="At.automation.buy_unlock"
+        :buyable="At.automation.unlock_buyable"
         :extra_classes="'A-button'"
-        :fully_bought="A.automation.At.unlocked"
+        :fully_bought="At.automation.unlocked"
     >
       <template #text>
-        <TextFormatter :text="A.automation.At.unlock_text()"/>
+        <TextFormatter :text="At.automation.unlock_text()"/>
       </template>
     </UpgradeButton>
     <br>
     <template v-for="layer in 8">
       <UpgradeButton
-          :buy="A.automation.Ai(layer).buy_unlock"
-          :buyable="A.automation.Ai(layer).unlock_buyable"
+          :buy="Ai(layer).automation.buy_unlock"
+          :buyable="Ai(layer).automation.unlock_buyable"
           :extra_classes="'A-button'"
-          :fully_bought="A.automation.Ai(layer).unlocked"
+          :fully_bought="Ai(layer).automation.unlocked"
       >
         <template #text>
-          <TextFormatter :text="A.automation.Ai(layer).unlock_text()"/>
+          <TextFormatter :text="Ai(layer).automation.unlock_text()"/>
         </template>
       </UpgradeButton>
     </template>

@@ -2,9 +2,13 @@ import A from "@/core/instances/A/A.js";
 import Ap from "@/core/instances/A/Ap.ts";
 import As from "@/core/instances/A/As.ts";
 import At from "@/core/instances/A/At.ts";
+import BC from "@/core/instances/B/BC.js";
 import BU from "@/core/instances/B/BU.js";
+import BU_qol from "@/core/instances/B/BU_qol.js";
 import { register } from "@/core/instances/instance-init.js";
-import DC from "@/core/main/DC.ts";
+import Progress from "@/core/instances/Progress/Progress.js";
+import Dec from "@/core/main/Dec.ts";
+import { TabId } from "@/core/main/defines.js";
 import { BuyMode } from "@/core/main/settings.ts";
 import { ExpCapScaling, ExpLinearScaling, ExpQuadScaling, type Scaling } from "@/core/math/scaling.ts";
 import { A_text, br, type FormattedText, sub } from "@/util/format.ts";
@@ -32,10 +36,15 @@ function _Ai(layer: number) {
         // production
 
         mult_buy10_total(): Decimal {
-            return Ai.mult_per_buy10().pow(Ai(layer).bought.div(DC.d10).floor());
+            return Ai.mult_per_buy10().pow(Ai(layer).bought.div(Dec.d10).floor());
         },
 
         mult_total(): Decimal {
+            if (BC(3).running()) {
+                let amount = BC(3).running_amount().min(8).toNumber();
+                if (layer <= amount) return Dec.d1;
+            }
+
             return Ai(layer).mult_buy10_total().mul(As.mult_for_Ai_total(layer)).mul(BU.mult_for_Ai_total(layer));
         },
 
@@ -51,7 +60,7 @@ function _Ai(layer: number) {
             if (layer < 8) {
                 return Ai(layer + 1).production_per_sign();
             } else {
-                return DC.d0;
+                return Dec.d0;
             }
         },
 
@@ -59,7 +68,7 @@ function _Ai(layer: number) {
             if (layer < 8) {
                 return Ai(layer + 1).production_per_second();
             } else {
-                return DC.d0;
+                return Dec.d0;
             }
         },
 
@@ -76,7 +85,10 @@ function _Ai(layer: number) {
                 new ExpLinearScaling(1e15, 1e15, 10),
                 new ExpLinearScaling(1e21, 1e20, 10),
             ];
-            return new ExpCapScaling(linearScaling[layer - 1], { price: DC.dNm });
+            if (!BU(12).bought) {
+                return new ExpCapScaling(linearScaling[layer - 1], { price: Dec.dNm });
+            }
+            return new ExpQuadScaling(linearScaling[layer - 1], { price: Dec.dNm }, Dec.d10);
         },
 
         price(): Decimal {
@@ -86,6 +98,11 @@ function _Ai(layer: number) {
             return true;
         },
         unlocked(): boolean {
+            if (BC(2).running()) {
+                let amount = BC(2).running_amount().min(8).toNumber();
+                if (layer > 8 - amount) return false;
+            }
+
             return As.bought.gte(layer - 4);
         },
 
@@ -97,7 +114,7 @@ function _Ai(layer: number) {
         bought_mod_10(): number {
             // avoid precision issues
             if (Ai(layer).bought.gte(1e10)) return 0;
-            return Ai(layer).bought.mod(DC.d10).floor().toNumber();
+            return Ai(layer).bought.mod(Dec.d10).floor().toNumber();
         },
         buyable_amount_to10(): number {
             if (!Ai(layer).unlocked()) return 0;
@@ -114,6 +131,8 @@ function _Ai(layer: number) {
 
         buy(mode?: BuyMode) {
             if (mode === undefined) mode = Ai.buy_mode;
+
+            if (!Ai(layer).buyable()) return;
 
             switch (mode) {
                 case BuyMode.BUY_ONE:
@@ -149,6 +168,82 @@ function _Ai(layer: number) {
             }
         },
 
+        // automation
+        automation: {
+            get unlocked(): boolean {
+                return window.player.A.Ai_automation[layer - 1].unlocked;
+            },
+            set unlocked(value: boolean) {
+                window.player.A.Ai_automation[layer - 1].unlocked = value;
+            },
+            get enabled(): boolean {
+                return window.player.A.Ai_automation[layer - 1].enabled;
+            },
+            set enabled(value: boolean) {
+                window.player.A.Ai_automation[layer - 1].enabled = value;
+            },
+            get mode(): BuyMode {
+                return window.player.A.Ai_automation[layer - 1].buy_mode;
+            },
+            set mode(value: BuyMode) {
+                window.player.A.Ai_automation[layer - 1].buy_mode = value;
+            },
+
+            requirement_for_unlock(): Decimal {
+                return Dec.d10.pow(10 * layer);
+            },
+
+            unlock_buyable(): boolean {
+                return Ap.amount.gte(Ai(layer).automation.requirement_for_unlock());
+            },
+
+            buy_unlock() {
+                if (!Ai(layer).automation.unlock_buyable()) return;
+                Ai(layer).automation.unlocked = true;
+                Ai(layer).automation.enabled = true;
+                Progress.unlock_tab(TabId.AUTOMATION);
+            },
+
+            allowed_modes(): BuyMode[] {
+                if (BU_qol(layer - 1).bought) return [BuyMode.BUY_ONE, BuyMode.BUY_TEN, BuyMode.BUY_MAX];
+                return [BuyMode.BUY_ONE, BuyMode.BUY_TEN];
+            },
+
+            // formatted text
+
+            unlock_text(): FormattedText {
+                return [
+                    "解锁自动购买 ", Ai(layer).formatted_name(), br(),
+                    "需要 ", A_text(Ai(layer).automation.requirement_for_unlock()), " ", Ap.formatted_name(),
+                ];
+            },
+
+            setting_description(): FormattedText {
+                return [Ai(layer).formatted_name(), " 自动购买"];
+            },
+
+            enable_button_text(): FormattedText {
+                if (Ai(layer).automation.enabled) {
+                    return "开启";
+                } else {
+                    return "关闭";
+                }
+            },
+
+            mode_button_text(): FormattedText {
+                switch (Ai(layer).automation.mode) {
+                    case BuyMode.BUY_ONE:
+                        return "购买 1 个";
+                    case BuyMode.BUY_TEN:
+                        return "购买 10 个";
+                    case BuyMode.BUY_MAX:
+                        return "购买最大";
+                    default:
+                        return null;
+                }
+            },
+        },
+
         // formatted text
 
         formatted_name(): FormattedText {
@@ -175,6 +270,11 @@ function _Ai(layer: number) {
             if (mode === undefined) mode = Ai.buy_mode;
 
             if (!Ai(layer).unlocked()) {
+                if (BC(2).running()) {
+                    let amount = BC(2).running_amount().min(8).toNumber();
+                    if (layer > 8 - amount) return ["因为 ", BC(2).formatted_name(), " 被禁用."];
+                }
+
                 return ["需要至少 ", layer - 4, " 个 ", As.formatted_name(), "."];
             }
 
@@ -212,8 +312,8 @@ function _Ai(layer: number) {
 
 const Ai = assignWithProperty(_Ai, {
     mult_per_buy10(): Decimal {
-        if (BU(5).bought) return DC.d2_5;
-        return DC.d2;
+        if (BU(5).bought) return Dec.d2_5;
+        return Dec.d2;
     },
 
     get buy_mode(): BuyMode {

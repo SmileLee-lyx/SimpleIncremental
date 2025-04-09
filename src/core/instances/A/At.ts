@@ -2,8 +2,13 @@ import A from "@/core/instances/A/A.js";
 import Ai from "@/core/instances/A/Ai.js";
 import Ap from "@/core/instances/A/Ap.js";
 import Atu from "@/core/instances/A/Atu.ts";
+import B from "@/core/instances/B/B.js";
+import BU from "@/core/instances/B/BU.js";
+import BU_qol from "@/core/instances/B/BU_qol.js";
 import { register } from "@/core/instances/instance-init.js";
-import DC from "@/core/main/DC.ts";
+import Progress from "@/core/instances/Progress/Progress.js";
+import Dec from "@/core/main/Dec.ts";
+import { TabId } from "@/core/main/defines.js";
 import { BuyMode } from "@/core/main/settings.ts";
 import { ExpCapScaling, ExpLinearScaling, ExpQuadScaling, type Scaling } from "@/core/math/scaling.js";
 import { A_text, br, type FormattedText, sub } from "@/util/format.ts";
@@ -24,7 +29,7 @@ const At = {
     },
 
     sign_speed(): Decimal {
-        if (!A.automation.auto_sign.unlocked) return DC.d0;
+        if (!A.automation.auto_sign.unlocked) return Dec.d0;
         return At.sign_speed_per_At().pow(At.bought);
     },
 
@@ -44,10 +49,9 @@ const At = {
     // buy
 
     price_scaling(): Scaling {
-        return new ExpCapScaling(
-            new ExpLinearScaling(10, 10, 1, false),
-            { price: DC.dNm },
-        );
+        let linearScaling: ExpLinearScaling = new ExpLinearScaling(10, 10, 1, false);
+        if (!BU(13).bought) return new ExpCapScaling(linearScaling, { price: Dec.dNm });
+        return new ExpQuadScaling(linearScaling, { price: Dec.dNm }, Dec.d10);
     },
 
     price(): Decimal {
@@ -55,6 +59,7 @@ const At = {
     },
 
     visible(): boolean {
+        if (B.unlocked) return true;
         return A.automation.auto_sign.unlocked;
     },
 
@@ -97,6 +102,80 @@ const At = {
         }
     },
 
+    //automation
+
+    automation: {
+        get unlocked(): boolean {
+            return window.player.A.At_automation.unlocked;
+        },
+        set unlocked(value: boolean) {
+            window.player.A.At_automation.unlocked = value;
+        },
+        get enabled(): boolean {
+            return window.player.A.At_automation.enabled;
+        },
+        set enabled(value: boolean) {
+            window.player.A.At_automation.enabled = value;
+        },
+        get mode(): BuyMode {
+            return window.player.A.At_automation.buy_mode;
+        },
+        set mode(value: BuyMode) {
+            window.player.A.At_automation.buy_mode = value;
+        },
+
+        requirement_for_unlock(): Decimal {
+            return Dec.d10.pow(100);
+        },
+
+        unlock_buyable(): boolean {
+            return Ap.amount.gte(At.automation.requirement_for_unlock());
+        },
+
+        buy_unlock() {
+            if (!At.automation.unlock_buyable()) return;
+            At.automation.unlocked = true;
+            At.automation.enabled = true;
+            Progress.unlock_tab(TabId.AUTOMATION);
+        },
+
+        allowed_modes(): BuyMode[] {
+            if (BU_qol(8).bought) return [BuyMode.BUY_ONE, BuyMode.BUY_MAX];
+            return [BuyMode.BUY_ONE];
+        },
+        // formatted text
+
+        unlock_text(): FormattedText {
+            return [
+                "解锁自动购买 ", At.formatted_name(), br(),
+                "需要 ", A_text(At.automation.requirement_for_unlock()), " ", Ap.formatted_name(),
+            ];
+        },
+
+        setting_description(): FormattedText {
+            return [At.formatted_name(), " 自动购买"];
+        },
+
+        enable_button_text(): FormattedText {
+            if (At.automation.enabled) {
+                return "开启";
+            } else {
+                return "关闭";
+            }
+        },
+
+        mode_button_text(): FormattedText {
+            switch (At.automation.mode) {
+                case BuyMode.BUY_ONE:
+                    return "购买 1 个";
+                case BuyMode.BUY_MAX:
+                    return "购买最大";
+                default:
+                    return null;
+            }
+        },
+    },
+
     // formatted text
 
     formatted_name(): FormattedText {
@@ -108,7 +187,7 @@ const At = {
             case BuyMode.BUY_ONE:
                 return ["购买 1 个 ", At.formatted_name()];
             case BuyMode.BUY_MAX:
-                return ["购买最大", At.formatted_name()];
+                return ["购买最大 ", At.formatted_name()];
             default:
                 return null;
         }

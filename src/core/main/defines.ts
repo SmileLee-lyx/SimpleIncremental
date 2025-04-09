@@ -1,4 +1,4 @@
-import DC from "@/core/main/DC.ts";
+import Dec from "@/core/main/Dec.ts";
 import { AlertId, AutoSaveSetting, BuyMode, SignSetting } from "@/core/main/settings.ts";
 import type { FormattedText } from "@/util/format.js";
 import Decimal from "break_eternity.js";
@@ -14,6 +14,7 @@ export enum TabGroupId {
     ACHIEVEMENTS = 2000,
     SETTINGS,
     CHEAT,
+    STATS,
 }
 
 export enum TabId {
@@ -29,7 +30,7 @@ export enum TabId {
     ACHIEVEMENTS = 2000,
     SETTINGS,
     CHEAT,
-
+    STATS,
 }
 
 export interface TabGroupConfig {
@@ -57,6 +58,33 @@ export interface Game {
     last_auto_save: number | null;
 }
 
+export interface ConfirmationSettings {
+    buy_As: boolean;
+    buy_Atu: boolean;
+    buy_B: boolean;
+    enter_BC: boolean;
+}
+
+export interface AnimationSettings {
+    buy_B: boolean;
+}
+
+export interface AsBuySettings {
+    use_limit: boolean;
+    limit: Decimal;
+    use_no_limit_above_Atu: boolean;
+    no_limit_above_Atu: Decimal;
+}
+
+export interface AtuBuySettings {
+    use_limit: boolean;
+    limit: Decimal;
+}
+
+export interface BBuySettings {
+    threshold_B: Decimal;
+}
+
 export interface Player {
     A: {
         Ap: Decimal;
@@ -65,22 +93,39 @@ export interface Player {
         As: Decimal;
         Atu: Decimal;
 
-        auto_sign: { unlocked: boolean, enabled: boolean };
-        Ai_automation: { unlocked: boolean, enabled: boolean, buy_mode: BuyMode }[];
-        At_automation: { unlocked: boolean, enabled: boolean, buy_mode: BuyMode };
+        auto_sign: { unlocked: boolean; enabled: boolean; };
+        Ai_automation: { unlocked: boolean; enabled: boolean; buy_mode: BuyMode; }[];
+        At_automation: { unlocked: boolean; enabled: boolean; buy_mode: BuyMode; };
+        As_automation: {
+            unlocked: boolean; enabled: boolean;
+            buy_settings: AsBuySettings;
+        };
+        Atu_automation: {
+            unlocked: boolean; enabled: boolean;
+            buy_settings: AtuBuySettings;
+        };
     };
     B: {
         unlocked: boolean;
         B_count: Decimal;
         Bp: Decimal;
-        Bq: Decimal;
+        Bp_mult_bought: Decimal;
         BU_bits: number[];
+        BU_count: Decimal[];
         BU_qol_bits: number[];
-        BC_completions: (Decimal | null)[];
+        BC_completions: Decimal[];
+        running_BC?: { label: number; amount: Decimal; };
+
+        B_automation: {
+            unlocked: boolean; enabled: boolean;
+            buy_settings: BBuySettings
+        };
     };
     settings: {
         sign_setting: SignSetting;
         auto_save_setting: AutoSaveSetting;
+        confirmation_setting: ConfirmationSettings;
+        animation_setting: AnimationSettings;
     };
     stats: {
         Game: {
@@ -89,6 +134,8 @@ export interface Player {
 
             best_Ap: Decimal;
             best_Bp: Decimal;
+            best_B_time: Decimal;
+            best_Bp_speed: Decimal;
         }
         this_B: {
             real_time: number;
@@ -117,20 +164,20 @@ declare global {
 
 export const defaultPlayer: Readonly<Player> = {
     A: {
-        Ap: DC.d10,
+        Ap: Dec.d10,
         Ai: [
-            { bought: DC.d0, amount: DC.d0 },
-            { bought: DC.d0, amount: DC.d0 },
-            { bought: DC.d0, amount: DC.d0 },
-            { bought: DC.d0, amount: DC.d0 },
-            { bought: DC.d0, amount: DC.d0 },
-            { bought: DC.d0, amount: DC.d0 },
-            { bought: DC.d0, amount: DC.d0 },
-            { bought: DC.d0, amount: DC.d0 },
+            { bought: Dec.d0, amount: Dec.d0 },
+            { bought: Dec.d0, amount: Dec.d0 },
+            { bought: Dec.d0, amount: Dec.d0 },
+            { bought: Dec.d0, amount: Dec.d0 },
+            { bought: Dec.d0, amount: Dec.d0 },
+            { bought: Dec.d0, amount: Dec.d0 },
+            { bought: Dec.d0, amount: Dec.d0 },
+            { bought: Dec.d0, amount: Dec.d0 },
         ],
-        At: DC.d0,
-        As: DC.d0,
-        Atu: DC.d0,
+        At: Dec.d0,
+        As: Dec.d0,
+        Atu: Dec.d0,
         auto_sign: { unlocked: false, enabled: false },
         Ai_automation: [
             { unlocked: false, enabled: false, buy_mode: BuyMode.BUY_TEN },
@@ -143,33 +190,68 @@ export const defaultPlayer: Readonly<Player> = {
             { unlocked: false, enabled: false, buy_mode: BuyMode.BUY_TEN },
         ],
         At_automation: { unlocked: false, enabled: false, buy_mode: BuyMode.BUY_ONE },
+        As_automation: {
+            unlocked: false, enabled: false,
+            buy_settings: {
+                use_limit: false,
+                limit: Dec.d0,
+                use_no_limit_above_Atu: false,
+                no_limit_above_Atu: Dec.d0,
+            },
+        },
+        Atu_automation: {
+            unlocked: false, enabled: false,
+            buy_settings: {
+                use_limit: false,
+                limit: Dec.d0,
+            },
+        },
     },
     B: {
         unlocked: false,
-        B_count: DC.d0,
-        Bp: DC.d0,
-        Bq: DC.d0,
-        BU_bits: [0, 0],
-        BU_qol_bits: [0, 0],
-        BC_completions: [null, null, null, null, null, null, null, null],
+        B_count: Dec.d0,
+        Bp: Dec.d0,
+        Bp_mult_bought: Dec.d0,
+        BU_bits: [],
+        BU_count: [],
+        BU_qol_bits: [],
+        BC_completions: [],
+
+        B_automation: {
+            unlocked: false, enabled: false,
+            buy_settings: {
+                threshold_B: Dec.d0,
+            },
+        },
     },
     settings: {
         sign_setting: SignSetting.DEFAULT,
         auto_save_setting: AutoSaveSetting.EVERY_30_SEC,
+        confirmation_setting: {
+            buy_As: true,
+            buy_Atu: true,
+            buy_B: true,
+            enter_BC: true,
+        },
+        animation_setting: {
+            buy_B: true,
+        },
     },
     stats: {
         Game: {
             real_time: 0,
-            game_time: DC.d0,
+            game_time: Dec.d0,
 
-            best_Ap: DC.d0,
-            best_Bp: DC.d0,
+            best_Ap: Dec.d0,
+            best_Bp: Dec.d0,
+            best_B_time: Dec.dInf,
+            best_Bp_speed: Dec.d0,
         },
         this_B: {
             real_time: 0,
-            game_time: DC.d0,
+            game_time: Dec.d0,
 
-            best_Ap: DC.d0,
+            best_Ap: Dec.d0,
         },
     },
     progress: {

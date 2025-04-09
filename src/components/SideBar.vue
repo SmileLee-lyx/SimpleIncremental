@@ -85,6 +85,10 @@ let tabs: Record<TabId, TabConfig> = {
     sideBarName: "作弊",
     groupId: TabGroupId.CHEAT,
   },
+  [TabId.STATS]: {
+    sideBarName: "数据",
+    groupId: TabGroupId.STATS,
+  },
 };
 
 let tabGroups: Record<TabGroupId, TabGroupConfig> = {
@@ -105,6 +109,9 @@ let tabGroups: Record<TabGroupId, TabGroupConfig> = {
   },
   [TabGroupId.CHEAT]: {
     sideBarName: "作弊",
+  },
+  [TabGroupId.STATS]: {
+    sideBarName: "数据",
   },
 };
 

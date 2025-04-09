@@ -1,4 +1,5 @@
 import A from "@/core/instances/A/A.js";
+import B from "@/core/instances/B/B.js";
 import Progress from "@/core/instances/Progress/Progress.js";
 import { AutoSaveSetting } from "@/core/main/settings.js";
 import { auto_save } from "@/save/save-load.js";
@@ -36,6 +37,7 @@ function runGameLoop(duration: number) {
     Progress.accumulate_game_time(new Decimal(duration)); // game speed is 1
 
     A.runGameLoop(duration);
+    B.runGameLoop(duration);
 
     // if (Ap.amount.gte(Decimal.dNumberMax)) {
     //     if (!window.player.progress.endgame) {

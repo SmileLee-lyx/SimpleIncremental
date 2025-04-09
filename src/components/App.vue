@@ -20,6 +20,7 @@ import BTab from "@/components/Tabs/BTab.vue";
 import BUpgradesTab from "@/components/Tabs/BUpgradesTab.vue";
 import CheatTab from "@/components/Tabs/CheatTab.vue";
 import SettingsTab from "@/components/Tabs/SettingsTab.vue";
+import StatsTab from "@/components/Tabs/StatsTab.vue";
 import { TabId } from "@/core/main/defines.ts";
 
 import "@/assets/main.scss";
@@ -75,6 +76,7 @@ const tabs: Record<TabId, Component | null> = {
   [TabId.ACHIEVEMENTS]: AchievementsTab,
   [TabId.SETTINGS]: SettingsTab,
   [TabId.CHEAT]: CheatTab,
+  [TabId.STATS]: StatsTab,
 }
 
 let activeTab: ComputedRef<Component | null> = computed(() => {

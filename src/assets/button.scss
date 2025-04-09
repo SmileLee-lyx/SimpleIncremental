@@ -51,6 +51,28 @@
   }
 }
 
+.upgrade-button.settings {
+  &.not-unlocked {
+    border-color: #aaa;
+    background-color: #aaa;
+  }
+
+  &.not-buyable {
+    border-color: #aaa;
+    background-color: #aaa;
+  }
+
+  &.buyable {
+    border-color: #000;
+    background-color: #fff;
+  }
+
+  &.fully-bought {
+    border-color: #fff;
+    background-color: #fff;
+  }
+}
+
 .upgrade-button.A-button {
   &.not-unlocked {
     border-color: #aaa;

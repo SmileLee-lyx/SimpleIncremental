@@ -3,7 +3,7 @@ import { deserialize, serialize } from "@/save/serializer.js";
 import { assign } from "lodash";
 import { toRaw } from "vue";
 
-const VERSION = 1;
+const VERSION = 2;
 
 export function deleteRaw(slot: string): void {
     localStorage.removeItem(window.location.pathname + slot);
@@ -73,7 +73,7 @@ export function manual_save(name: string) {
     }
 }
 
-type LoadResult = {
+export type LoadResult = {
     success: boolean;
     errors?: string[];
     warnings?: string[];

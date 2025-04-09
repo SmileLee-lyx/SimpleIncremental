@@ -1,4 +1,5 @@
 import { register } from "@/core/instances/instance-init.js";
+import Dec from "@/core/main/Dec.js";
 import type { TabId } from "@/core/main/defines.js";
 import type Decimal from "break_eternity.js";
 
@@ -37,6 +38,11 @@ const Progress = {
         },
         set game_time(value: Decimal) {
             window.player.stats.this_B.game_time = value;
+        },
+
+        reset() {
+            Progress.this_B.real_time = 0;
+            Progress.this_B.game_time = Dec.d0;
         },
     },
 

@@ -72,21 +72,32 @@ function remove_used_cheat() {
 
     <br>
 
-    <button class="select-button" @click="modify_game_speed">修改游戏速度</button>
     <UpgradeButton
-        :buy="modify_Ap">
+        :buy="modify_game_speed"
+        extra_classes="settings"
+    >
+      <template #text>修改游戏速度</template>
+    </UpgradeButton>
+    <UpgradeButton
+        :buy="modify_Ap"
+        extra_classes="A-button"
+    >
       <template #text>
         <TextFormatter :text="['修改 ', Ap.formatted_name(), ' 的数量']"/>
       </template>
     </UpgradeButton>
     <UpgradeButton
-        :buy="get_free_As">
+        :buy="get_free_As"
+        extra_classes="A-button"
+    >
       <template #text>
         <TextFormatter :text="['白嫖一个 ', As.formatted_name()]"/>
       </template>
     </UpgradeButton>
     <UpgradeButton
-        :buy="get_free_Atu">
+        :buy="get_free_Atu"
+        extra_classes="A-button"
+    >
       <template #text>
         <TextFormatter :text="['白嫖一个 ', Atu.formatted_name()]"/>
       </template>
@@ -94,6 +105,7 @@ function remove_used_cheat() {
     <UpgradeButton
         :buyable="() => player.progress.used_cheat"
         :buy="remove_used_cheat"
+        extra_classes="settings"
     >
       <template #text>
         去除存档作弊标记

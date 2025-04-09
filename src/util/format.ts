@@ -19,7 +19,7 @@ function format_raw(sign: number, mag: number, layer: number): string {
     if (Number.isNaN(sign)) return "NaN";
 
     // any 0 is fully 0
-    if (sign === 0) return "0";
+    if (sign === 0) return "0.000";
     if (sign < 0) return "-" + format_raw(1, mag, layer);
 
     // any infinity is fully infinity

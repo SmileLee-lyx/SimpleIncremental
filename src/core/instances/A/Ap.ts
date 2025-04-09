@@ -3,7 +3,7 @@ import Ai from "@/core/instances/A/Ai.ts";
 import BU from "@/core/instances/B/BU.js";
 import { register } from "@/core/instances/instance-init.js";
 import Records from "@/core/instances/Progress/Records.js";
-import DC from "@/core/main/DC.js";
+import Dec from "@/core/main/Dec.js";
 import { A_text, type FormattedText } from "@/util/format.ts";
 import type Decimal from "break_eternity.js";
 
@@ -18,12 +18,13 @@ const Ap = {
     },
 
     spend(amount: Decimal): void {
-        Ap.amount = Ap.amount.sub(amount);
+        Ap.amount = Ap.amount.sub(amount).max(0);
     },
 
     amount_after_reset(): Decimal {
-        if (BU(0).bought) return DC.d1e10;
-        return DC.d10;
+        if (BU(11).bought) return Dec.d1e25;
+        if (BU(0).bought) return Dec.d1e10;
+        return Dec.d10;
     },
 
     // production

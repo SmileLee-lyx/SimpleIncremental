@@ -11,7 +11,25 @@ import { range } from "lodash";
   <div class="main-text">
     <TextFormatter :text="BU.description()"/>
 
-    <template v-for="i in range(0, 8)">
+    <template v-if="BU.Bp_mult.unlocked()">
+      <br>
+      <UpgradeButton
+          :unlocked="BU.Bp_mult.unlocked"
+          :buyable="BU.Bp_mult.buyable"
+          :buy="BU.Bp_mult.buy"
+          :has_tooltip="true"
+          :extra_classes="'B-button'"
+      >
+        <template #text>
+          <TextFormatter :text="BU.Bp_mult.buy_button_message()"/>
+        </template>
+        <template #tooltip>
+          <TextFormatter :text="BU.Bp_mult.tooltip_text()"/>
+        </template>
+      </UpgradeButton>
+    </template>
+
+    <template v-for="i in range(0, BU.visible_amount())">
       <br v-if="i % 4 === 0">
       <UpgradeButton
           :unlocked="BU(i).unlocked"
@@ -21,10 +39,12 @@ import { range } from "lodash";
           :extra_classes="'B-button'"
       >
         <template #text>
-          <TextFormatter :text="BU(i).buy_button_text()"/>
+          <TextFormatter :text="BU(i).buy_button_message()"/>
         </template>
       </UpgradeButton>
     </template>
+    <br>
+    <TextFormatter :text="BU.next_unlock_description()"/>
   </div>
 </template>
 
